@@ -38,7 +38,7 @@ with the methodology and data repos as siblings. One article per pass.
    historian object? Drop or fix any flag that loses the argument. Record
    dropped flags and why in the session summary for the owner.
 4. **Assemble:** write `../decolonize-data/analyses/en/<slug>/<seq>.json`
-   per the schema in `src/schema/analysis.ts`. `<seq>` = 1 + highest
+   per the schema in `src/schema/analysis.ts`, with `status: "draft"`. `<seq>` = 1 + highest
    existing sequence for that slug (1 if none). Flag ids:
    `<slug>-<seq>-<categoryId>-<n>`. If a prior analysis exists and a quote
    persists unchanged, reuse its flag id.
@@ -48,7 +48,8 @@ with the methodology and data repos as siblings. One article per pass.
 6. **Owner review (blocking):** present every flag (quote, category,
    explanation, rewrite), the dropped-flag list, context facts with sources,
    and the naming note. The owner edits/approves. Nothing is committed
-   without approval.
+   without approval. Approval is recorded by flipping `status` from
+   `"draft"` to `"published"` (re-run verify after the flip).
 7. **Publish:** commit the analysis + extract to the data repo:
    `git add analyses extracts && git commit -m "data: <slug> #<seq> (rev <revisionId>, methodology <version>)"`
 

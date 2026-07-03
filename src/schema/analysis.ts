@@ -45,7 +45,7 @@ export const AnalysisSchema = z
     methodologyVersion: z.string().regex(/^v\d+\.\d+$/),
     sequence: z.number().int().positive(),
     model: z.string().min(3),
-    status: z.enum(["published", "superseded"]),
+    status: z.enum(["draft", "published", "superseded"]),
     summary: z.object({
       paragraph: z.string().min(50),
       flagCounts: z.partialRecord(

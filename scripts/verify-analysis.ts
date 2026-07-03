@@ -42,3 +42,8 @@ if (missing.length > 0) {
 console.log(
   `\nAll ${results.length} quotes verified against revision ${a.article.revisionId}. Schema valid.`,
 );
+if (a.status === "draft") {
+  console.warn(
+    "WARNING: status is 'draft' — not owner-approved. Do not commit until the owner flips it to 'published'.",
+  );
+}
