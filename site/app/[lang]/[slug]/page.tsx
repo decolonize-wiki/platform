@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { loadAllAnalyses, latestFor } from "../../../lib/data";
-import { liveRevisionIds } from "../../../lib/freshness";
+import { getAllAnalyses, getLiveRevisionIds } from "../../../lib/cached";
+import { latestFor } from "../../../lib/data";
 import { AnalysisView } from "../../../components/AnalysisView";
 
 type Params = { lang: string; slug: string };
 
 export async function generateStaticParams(): Promise<Params[]> {
-  const all = await loadAllAnalyses();
+  const all = await getAllAnalyses();
   const seen = new Set<string>();
   const out: Params[] = [];
   for (const a of all) {
@@ -26,7 +26,7 @@ export async function generateMetadata({
   params: Promise<Params>;
 }): Promise<Metadata> {
   const p = await params;
-  const analysis = latestFor(await loadAllAnalyses(), p.lang, p.slug);
+  const analysis = latestFor(await getAllAnalyses(), p.lang, p.slug);
   if (!analysis) return {};
   const firstSentence =
     analysis.summary.paragraph.match(/^.*?[.!?](?=\s|$)/)?.[0] ??
@@ -40,9 +40,9 @@ export async function generateMetadata({
 
 export default async function Page({ params }: { params: Promise<Params> }) {
   const p = await params;
-  const analysis = latestFor(await loadAllAnalyses(), p.lang, p.slug);
+  const analysis = latestFor(await getAllAnalyses(), p.lang, p.slug);
   if (!analysis) notFound();
-  const live = await liveRevisionIds([analysis.article.title]);
+  const live = await getLiveRevisionIds();
   return (
     <AnalysisView
       analysis={analysis}

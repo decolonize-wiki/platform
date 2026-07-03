@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useRef } from "react";
 
-export function Strike({ term, fix }: { term: string; fix?: string }) {
+export function Strike({ term }: { term: string }) {
   const ref = useRef<HTMLSpanElement>(null);
   useEffect(() => {
     const el = ref.current;
@@ -23,16 +23,8 @@ export function Strike({ term, fix }: { term: string; fix?: string }) {
     return () => io.disconnect();
   }, []);
   return (
-    <>
-      <span ref={ref} className="struck">
-        {term}
-      </span>
-      {fix ? (
-        <>
-          {" "}
-          <span className="fix">{fix}</span>
-        </>
-      ) : null}
-    </>
+    <span ref={ref} className="struck">
+      {term}
+    </span>
   );
 }

@@ -3,3 +3,4 @@ node_modules/
 .drafts/
 .claude/
 CLAUDE.md
+*.tsbuildinfo

@@ -18,6 +18,8 @@ function wordCount(s: string): number {
 
 export function FlagBlock({ flag, index }: { flag: Flag; index: number }) {
   const disputeUrl = `https://github.com/decolonize-wiki/methodology/issues/new?title=${encodeURIComponent(`Dispute: ${flag.id}`)}&labels=dispute`;
+  // .struck is white-space:nowrap (the animated strike line must not wrap),
+  // so only short quotes can be struck whole without overflowing on phones.
   const strikeWhole = wordCount(flag.quote) <= 6;
   return (
     <article className="flagblock" id={flag.id}>

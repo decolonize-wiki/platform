@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { loadAllAnalyses, latestFor } from "../../../../lib/data";
-import { liveRevisionIds } from "../../../../lib/freshness";
+import { getAllAnalyses, getLiveRevisionIds } from "../../../../lib/cached";
+import { latestFor } from "../../../../lib/data";
 import { AnalysisView } from "../../../../components/AnalysisView";
 
 type Params = { lang: string; slug: string; seq: string };
 
 export async function generateStaticParams(): Promise<Params[]> {
-  const all = await loadAllAnalyses();
+  const all = await getAllAnalyses();
   return all.map((a) => ({
     lang: a.language,
     slug: a.article.slug,
@@ -16,7 +16,7 @@ export async function generateStaticParams(): Promise<Params[]> {
 }
 
 async function find(params: Params) {
-  const all = await loadAllAnalyses();
+  const all = await getAllAnalyses();
   const analysis = all.find(
     (a) =>
       a.language === params.lang &&
@@ -32,14 +32,21 @@ export async function generateMetadata({
   params: Promise<Params>;
 }): Promise<Metadata> {
   const p = await params;
-  const { analysis } = await find(p);
+  const { all, analysis } = await find(p);
   if (!analysis) return {};
   const firstSentence =
     analysis.summary.paragraph.match(/^.*?[.!?](?=\s|$)/)?.[0] ??
     analysis.summary.paragraph;
+  const isLatest =
+    latestFor(all, p.lang, p.slug)?.sequence === analysis.sequence;
   return {
     title: `${analysis.article.title} — decolonize.wiki analysis #${analysis.sequence}`,
     description: firstSentence,
+    alternates: {
+      canonical: isLatest
+        ? `/${p.lang}/${p.slug}`
+        : `/${p.lang}/${p.slug}/${p.seq}`,
+    },
   };
 }
 
@@ -49,7 +56,7 @@ export default async function Page({ params }: { params: Promise<Params> }) {
   if (!analysis) notFound();
   const latest = latestFor(all, p.lang, p.slug);
   const latestSeq = latest?.sequence ?? analysis.sequence;
-  const live = await liveRevisionIds([analysis.article.title]);
+  const live = await getLiveRevisionIds();
   return (
     <AnalysisView
       analysis={analysis}
