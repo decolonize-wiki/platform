@@ -28,15 +28,37 @@ function junction(prev: string, next: string): string {
   return " ";
 }
 
+// The quote body: a term-level strike (struck term + inline hot stamp for its
+// replacement) when flag.strike is present; otherwise whole-quote strike for
+// short quotes and plain text for long ones (.struck is nowrap, so a long whole
+// quote would overflow on phones — term strikes are short, so always allowed).
+function QuoteBody({ flag }: { flag: Flag }) {
+  if (flag.strike) {
+    const at = flag.quote.indexOf(flag.strike.term);
+    if (at >= 0) {
+      return (
+        <>
+          {flag.quote.slice(0, at)}
+          <Strike term={flag.strike.term} />{" "}
+          <span className="fix">{flag.strike.stamp}</span>
+          {flag.quote.slice(at + flag.strike.term.length)}
+        </>
+      );
+    }
+  }
+  return wordCount(flag.quote) <= 6 ? <Strike term={flag.quote} /> : <>{flag.quote}</>;
+}
+
 export function FlagBlock({ flag, index }: { flag: Flag; index: number }) {
   const disputeUrl = `https://github.com/decolonize-wiki/methodology/issues/new?title=${encodeURIComponent(`Dispute: ${flag.id}`)}&labels=dispute`;
-  // .struck is white-space:nowrap (the animated strike line must not wrap),
-  // so only short quotes can be struck whole without overflowing on phones.
-  const strikeWhole = wordCount(flag.quote) <= 6;
   const beforeGap = junction(flag.anchorBefore, flag.quote);
   const afterGap = junction(flag.quote, flag.anchorAfter);
   return (
     <article className="flagblock" id={flag.id}>
+      <div className="flaghead">
+        <span className="flagnum">{String(index + 1).padStart(2, "0")}</span>
+        <span className="stamp">{CATEGORY_NAMES[flag.categoryId]}</span>
+      </div>
       <blockquote className="quote">
         {"“"}
         {flag.anchorBefore ? (
@@ -45,7 +67,7 @@ export function FlagBlock({ flag, index }: { flag: Flag; index: number }) {
             {beforeGap}
           </>
         ) : null}
-        {strikeWhole ? <Strike term={flag.quote} /> : flag.quote}
+        <QuoteBody flag={flag} />
         {flag.anchorAfter ? (
           <>
             {afterGap}
@@ -54,16 +76,13 @@ export function FlagBlock({ flag, index }: { flag: Flag; index: number }) {
         ) : null}
         {"”"}
       </blockquote>
-      <div className="flagline">
-        <b>
-          Flag {index + 1} · {CATEGORY_NAMES[flag.categoryId]}
-        </b>
-        <a href={disputeUrl}>dispute this flag</a>
-      </div>
       <p className="why">{flag.explanation}</p>
       <div className="rw">
         <b>Suggested rewrite</b>
         <span>{flag.rewrite}</span>
+      </div>
+      <div className="flagline">
+        <a href={disputeUrl}>dispute this flag</a>
       </div>
     </article>
   );

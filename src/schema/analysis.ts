@@ -11,15 +11,31 @@ export const CATEGORY_IDS = [
 
 export type CategoryId = (typeof CATEGORY_IDS)[number];
 
-export const FlagSchema = z.object({
-  id: z.string().regex(/^[a-z0-9-]+$/),
-  categoryId: z.enum(CATEGORY_IDS),
-  quote: z.string().min(10),
-  anchorBefore: z.string(),
-  anchorAfter: z.string(),
-  explanation: z.string().min(30),
-  rewrite: z.string().min(5),
-});
+export const FlagSchema = z
+  .object({
+    id: z.string().regex(/^[a-z0-9-]+$/),
+    categoryId: z.enum(CATEGORY_IDS),
+    quote: z.string().min(10),
+    anchorBefore: z.string(),
+    anchorAfter: z.string(),
+    explanation: z.string().min(30),
+    rewrite: z.string().min(5),
+    // Optional term-level correction: strike `term` (which must appear verbatim
+    // in `quote`) and stamp `stamp` in its place. Rendering-only; whole-quote
+    // treatment stays when absent.
+    strike: z
+      .object({ term: z.string().min(2), stamp: z.string().min(2) })
+      .optional(),
+  })
+  .superRefine((f, ctx) => {
+    if (f.strike && !f.quote.includes(f.strike.term)) {
+      ctx.addIssue({
+        code: "custom",
+        message: `strike.term "${f.strike.term}" does not occur in quote`,
+        path: ["strike", "term"],
+      });
+    }
+  });
 
 export const ContextFactSchema = z.object({
   fact: z.string().min(20),

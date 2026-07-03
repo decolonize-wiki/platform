@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import Link from "next/link";
 import { getCategories, getSources } from "../../../lib/methodology";
 import { JsonLd } from "../../../components/JsonLd";
+import { RepoLink } from "../../../components/RepoLink";
 
 type Params = { lang: string };
 
@@ -160,7 +161,7 @@ export default async function Page() {
         <span>An open project · AGPL / CC BY-SA</span>
         <span>
           Not affiliated with the Wikimedia Foundation · analyses critique
-          articles, not editors
+          articles, not editors · <RepoLink />
         </span>
       </footer>
     </>

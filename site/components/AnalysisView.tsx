@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { Analysis } from "@schema/analysis";
 import { FlagBlock, CATEGORY_NAMES } from "./FlagBlock";
 import { Receipt } from "./Receipt";
+import { RepoLink } from "./RepoLink";
 
 export function AnalysisView({
   analysis,
@@ -79,6 +80,16 @@ export function AnalysisView({
         <h2>Read the evidence.</h2>
         <p className="lede-p">{summary.paragraph}</p>
 
+        {counts.length > 0 ? (
+          <div className="pills">
+            {counts.map(([id, n]) => (
+              <span className="pill" key={id}>
+                {CATEGORY_NAMES[id]} <b>{n}</b>
+              </span>
+            ))}
+          </div>
+        ) : null}
+
         {analysis.flags.map((flag, i) => (
           <FlagBlock key={flag.id} flag={flag} index={i} />
         ))}
@@ -118,7 +129,7 @@ export function AnalysisView({
         <span>
           We critique articles, not editors · quotes CC BY-SA · this page
           critiques rev {article.revisionId} — the live article may have changed{" "}
-          <em>· CC BY-SA</em>
+          <em>· CC BY-SA</em> · <RepoLink />
         </span>
       </footer>
     </>

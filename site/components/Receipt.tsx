@@ -18,16 +18,34 @@ export function Receipt({
           {liveRevisionId}).
         </p>
       ) : null}
-      <ul>
-        <li>
-          Article · <a href={article.url}>{article.url}</a>
-        </li>
-        <li>Pinned revision · {article.revisionId}</li>
-        <li>Fetched · {article.fetchedAt.slice(0, 10)}</li>
-        <li>Methodology · {analysis.methodologyVersion}</li>
-        <li>Status · {analysis.status}</li>
-        <li>Flags · {analysis.flags.length}</li>
-      </ul>
+      <dl>
+        <div>
+          <dt>Article</dt>
+          <dd>
+            <a href={article.url}>{article.url}</a>
+          </dd>
+        </div>
+        <div>
+          <dt>Pinned revision</dt>
+          <dd>{article.revisionId}</dd>
+        </div>
+        <div>
+          <dt>Fetched</dt>
+          <dd>{article.fetchedAt.slice(0, 10)}</dd>
+        </div>
+        <div>
+          <dt>Methodology</dt>
+          <dd>{analysis.methodologyVersion}</dd>
+        </div>
+        <div>
+          <dt>Status</dt>
+          <dd>{analysis.status}</dd>
+        </div>
+        <div>
+          <dt>Flags</dt>
+          <dd>{analysis.flags.length}</dd>
+        </div>
+      </dl>
     </section>
   );
 }

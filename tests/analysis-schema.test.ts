@@ -69,4 +69,16 @@ describe("AnalysisSchema", () => {
   it("exposes the six v0.1 category ids", () => {
     expect(CATEGORY_IDS).toHaveLength(6);
   });
+
+  it("accepts a flag whose strike term occurs in the quote", () => {
+    const withStrike = structuredClone(valid) as any;
+    withStrike.flags[0].strike = { term: "discovered", stamp: "INVADED" };
+    expect(AnalysisSchema.safeParse(withStrike).success).toBe(true);
+  });
+
+  it("rejects a flag whose strike term is absent from the quote", () => {
+    const bad = structuredClone(valid) as any;
+    bad.flags[0].strike = { term: "not-in-quote", stamp: "INVADED" };
+    expect(AnalysisSchema.safeParse(bad).success).toBe(false);
+  });
 });

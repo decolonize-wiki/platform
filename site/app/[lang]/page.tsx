@@ -7,7 +7,11 @@ import { Library } from "../../components/Library";
 import { Atlas } from "../../components/Atlas";
 import { SLUG_REGION } from "../../lib/atlas-regions";
 import { EmailForm } from "../../components/EmailForm";
+import { RepoLink } from "../../components/RepoLink";
 import type { Analysis } from "@schema/analysis";
+
+const REQUEST_URL =
+  "https://github.com/decolonize-wiki/methodology/issues/new?title=Request%3A%20%5BArticle%20title%5D&labels=article-request&body=Which%20Wikipedia%20article%3F%0A%0AWhy%3F";
 
 const MISSION =
   "Wikipedia still says it. We read the world's encyclopedia line by line, against a public methodology built on a century of decolonial thought — and publish the receipts.";
@@ -123,6 +127,14 @@ export default async function Page({ params }: { params: Promise<Params> }) {
         </div>
         <h2>The archive.</h2>
         <Library entries={entries} />
+        <p className="request">
+          <a href={REQUEST_URL} className="mono">
+            Request an article →
+          </a>
+        </p>
+        <p className="request-copy">
+          Pick the next articles: open a request — most-👍 goes first.
+        </p>
       </section>
 
       <section className="atlas-section" id="atlas">
@@ -147,7 +159,7 @@ export default async function Page({ params }: { params: Promise<Params> }) {
         <span>An open project · AGPL / CC BY-SA</span>
         <span>
           Not affiliated with the Wikimedia Foundation · analyses critique
-          articles, not editors
+          articles, not editors · <RepoLink />
         </span>
       </footer>
     </>
