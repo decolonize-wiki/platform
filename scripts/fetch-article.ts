@@ -16,6 +16,15 @@ const dir = join(DATA, "extracts", "en", slug);
 await mkdir(dir, { recursive: true });
 const file = join(dir, `${a.revisionId}.txt`);
 await writeFile(file, a.extract, "utf8");
+let wikitextPath: string | null = null;
+if (a.wikitext) {
+  wikitextPath = join(dir, `${a.revisionId}.wikitext`);
+  await writeFile(wikitextPath, a.wikitext, "utf8");
+} else {
+  console.error(
+    "warning: no revision content returned — citation data unavailable for this fetch",
+  );
+}
 
 console.log(
   JSON.stringify(
@@ -27,6 +36,7 @@ console.log(
       url: a.url,
       extractPath: file,
       extractChars: a.extract.length,
+      wikitextPath,
     },
     null,
     2,

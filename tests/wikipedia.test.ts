@@ -32,6 +32,48 @@ describe("fetchArticle", () => {
     });
   });
 
+  it("returns the revision wikitext when the API provides it", async () => {
+    stubFetch({
+      query: {
+        pages: [
+          {
+            title: "Brazil",
+            extract: "Brazil is a country in South America.",
+            revisions: [
+              {
+                revid: 1184020000,
+                slots: {
+                  main: {
+                    content: "Brazil is a country.<ref>Fausto 1999</ref>",
+                  },
+                },
+              },
+            ],
+          },
+        ],
+      },
+    });
+    const a = await fetchArticle("Brazil");
+    expect(a.wikitext).toBe("Brazil is a country.<ref>Fausto 1999</ref>");
+  });
+
+  it("degrades gracefully when revision content is absent", async () => {
+    stubFetch({
+      query: {
+        pages: [
+          {
+            title: "Brazil",
+            extract: "Brazil is a country in South America.",
+            revisions: [{ revid: 1184020000 }],
+          },
+        ],
+      },
+    });
+    const a = await fetchArticle("Brazil");
+    expect(a.wikitext).toBeUndefined();
+    expect(a.extract).toBe("Brazil is a country in South America.");
+  });
+
   it("throws a clear error for a missing page", async () => {
     stubFetch({ query: { pages: [{ title: "Xyzzy", missing: true }] } });
     await expect(fetchArticle("Xyzzy")).rejects.toThrow(/not found/i);

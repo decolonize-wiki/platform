@@ -12,7 +12,11 @@ with the methodology and data repos as siblings. One article per pass.
 ## Steps
 
 1. **Fetch:** `npm run fetch-article -- "<Title>"`. Record the printed
-   metadata (slug, revisionId, fetchedAt, url).
+   metadata (slug, revisionId, fetchedAt, url). This also stores the
+   revision's wikitext (`<revisionId>.wikitext`), which carries the
+   `<ref>` citation data; if the CLI warns that no revision content came
+   back, note it and proceed — citation checks then fall back to in-text
+   attribution only.
 2. **Analyze (pass 1):** read the stored extract in full. For each category
    file, apply its "Flag when" criteria and — before flagging anything —
    its "Do NOT flag when" exclusions. When in doubt, do not flag. For each
@@ -22,6 +26,12 @@ with the methodology and data repos as siblings. One article per pass.
    (ONLY facts verifiable against SOURCES.md entries, with sourceId), and a
    naming note if the toponymic criteria apply (attestation + scope
    required).
+   For any one-sided-sourcing candidate, locate the flagged sentence in
+   the stored wikitext and read its `<ref>` tags before deciding: the
+   category's "cited only to colonizer accounts" test is about those
+   citations. If the wikitext is unavailable or the refs are ambiguous,
+   the flag may still stand on in-text attribution alone — say so
+   explicitly in the explanation.
 3. **Adversarial pass (pass 2):** in a FRESH context (subagent), argue
    against every flag as a skeptical historian and experienced Wikipedia
    editor: is the quote exact? does an exclusion apply? would a fair-minded
@@ -47,4 +57,11 @@ with the methodology and data repos as siblings. One article per pass.
 - Quotes are verbatim or they are wrong.
 - Exclusions beat criteria; doubt means no flag.
 - Context facts without a SOURCES.md sourceId are dropped, not softened.
+  But dropping is not the end of it: when a flag, rewrite, or context
+  fact is blocked only by a missing source, research candidate scholarly
+  sources (websearch is fine) and open a PR against the methodology repo
+  adding the source to SOURCES.md with full bibliographic data, per
+  GOVERNANCE.md. Record the blocked item in the session summary so the
+  analysis can be revised once the owner merges the PR. Never use a
+  source in an analysis before it is merged into SOURCES.md.
 - Never claim credit for Wikipedia edits; see the engagement policy.

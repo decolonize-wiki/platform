@@ -3,6 +3,8 @@ export interface FetchedArticle {
   revisionId: number;
   extract: string;
   url: string;
+  /** Raw wikitext of the pinned revision (carries <ref> citation data). Absent if the API did not return revision content. */
+  wikitext?: string;
 }
 
 const API = "https://en.wikipedia.org/w/api.php";
@@ -17,7 +19,8 @@ export async function fetchArticle(title: string): Promise<FetchedArticle> {
     prop: "extracts|revisions",
     explaintext: "1",
     redirects: "1",
-    rvprop: "ids",
+    rvprop: "ids|content",
+    rvslots: "main",
     titles: title,
   });
   const res = await fetch(`${API}?${params}`, {
@@ -30,7 +33,10 @@ export async function fetchArticle(title: string): Promise<FetchedArticle> {
         title: string;
         missing?: boolean;
         extract?: string;
-        revisions?: Array<{ revid: number }>;
+        revisions?: Array<{
+          revid: number;
+          slots?: { main?: { content?: string } };
+        }>;
       }>;
     };
   };
@@ -43,5 +49,6 @@ export async function fetchArticle(title: string): Promise<FetchedArticle> {
     revisionId: page.revisions[0].revid,
     extract: page.extract,
     url: `https://en.wikipedia.org/wiki/${encodeURIComponent(page.title.replace(/ /g, "_"))}`,
+    wikitext: page.revisions[0].slots?.main?.content,
   };
 }
