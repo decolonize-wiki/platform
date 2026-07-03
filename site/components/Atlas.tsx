@@ -186,28 +186,53 @@ export function Atlas({ entries }: { entries: AtlasEntry[] }) {
     [owner, southUp],
   );
 
+  // Position the info box at a point and reveal the entries under it.
+  const showAt = useCallback(
+    (clientX: number, clientY: number) => {
+      const found = entriesAt(clientX, clientY);
+      setActive(found);
+      if (found.length) {
+        const host = boxRef.current?.getBoundingClientRect();
+        const x = clientX - (host?.left ?? 0);
+        const y = clientY - (host?.top ?? 0);
+        setPointer({
+          x,
+          y,
+          flipX: (host?.width ?? 0) - x < 300,
+          flipY: (host?.height ?? 0) - y < 120,
+        });
+      } else {
+        setPointer(null);
+      }
+      return found;
+    },
+    [entriesAt],
+  );
+
+  // A tap fires synthetic mouse events too; this flag lets onClick know the
+  // interaction was touch so it reveals the box instead of navigating away.
+  const touched = useRef(false);
+
   const onMove = (ev: React.MouseEvent<HTMLDivElement>) => {
+    if (touched.current) return; // let touch handlers own the interaction
     // Keep the current box open while the pointer is over it (its rows are links).
     if ((ev.target as HTMLElement).closest(".atlas-info")) return;
-    const found = entriesAt(ev.clientX, ev.clientY);
-    setActive(found);
-    if (found.length) {
-      const host = boxRef.current?.getBoundingClientRect();
-      const x = ev.clientX - (host?.left ?? 0);
-      const y = ev.clientY - (host?.top ?? 0);
-      setPointer({
-        x,
-        y,
-        flipX: (host?.width ?? 0) - x < 300,
-        flipY: (host?.height ?? 0) - y < 120,
-      });
-    } else {
-      setPointer(null);
-    }
+    showAt(ev.clientX, ev.clientY);
+  };
+
+  const onTouchEnd = (ev: React.TouchEvent<HTMLDivElement>) => {
+    if ((ev.target as HTMLElement).closest(".atlas-info")) return; // links handle it
+    touched.current = true;
+    const t = ev.changedTouches[0];
+    if (t) showAt(t.clientX, t.clientY); // first tap: reveal, don't navigate
   };
 
   const onClick = (ev: React.MouseEvent<HTMLDivElement>) => {
     if ((ev.target as HTMLElement).closest(".atlas-info")) return; // links handle it
+    if (touched.current) {
+      touched.current = false;
+      return; // touch reveals the box; the row links navigate
+    }
     const found = entriesAt(ev.clientX, ev.clientY);
     if (found.length) router.push(`/${found[0].lang}/${found[0].slug}`);
   };
@@ -231,9 +256,11 @@ export function Atlas({ entries }: { entries: AtlasEntry[] }) {
         className="atlas-map"
         onMouseMove={onMove}
         onMouseLeave={() => {
+          if (touched.current) return;
           setActive([]);
           setPointer(null);
         }}
+        onTouchEnd={onTouchEnd}
         onClick={onClick}
         style={{ cursor: active.length ? "pointer" : "default" }}
       >

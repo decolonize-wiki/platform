@@ -1,6 +1,7 @@
 :root{ --black:#0d0d0d; --paper:#f4f2ec; --hot:#ff3b1f; --grey:#8a8a8a; --soft:#cfcbc2; --hair:#2a2a2a; --pgrey:#7a756a; --pink:#3c382f; }
-html{color-scheme:dark;}
-body{margin:0;background:var(--black);color:var(--paper);font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;line-height:1.55;}
+html{color-scheme:dark;-webkit-text-size-adjust:100%;text-size-adjust:100%;}
+body{margin:0;background:var(--black);color:var(--paper);font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;line-height:1.55;overflow-x:hidden;}
+a,button,input{-webkit-tap-highlight-color:rgba(255,59,31,.24);}
 .disp{font-family:'Arial Narrow',Haettenschweiler,Impact,'Helvetica Neue',sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:-.01em;line-height:.95;}
 .mono{font-family:ui-monospace,'Courier New',monospace;text-transform:uppercase;letter-spacing:.18em;}
 a{color:inherit;}
@@ -73,7 +74,7 @@ a{color:inherit;}
 .receipt dl>div{display:grid;grid-template-columns:minmax(110px,34%) 1fr;border-top:1px solid var(--hair);}
 .receipt dl>div:first-child{border-top:none;}
 .receipt dt{padding:11px 14px;color:var(--grey);border-right:1px solid var(--hair);}
-.receipt dd{padding:11px 14px;margin:0;color:var(--soft);letter-spacing:.1em;overflow-wrap:anywhere;}
+.receipt dd{padding:11px 14px;margin:0;color:var(--soft);letter-spacing:.1em;overflow-wrap:anywhere;word-break:break-word;min-width:0;}
 .receipt dd a{color:var(--soft);text-decoration:underline;text-underline-offset:3px;}
 .receipt .banner{margin:0 0 18px;}
 
@@ -157,3 +158,31 @@ a{color:inherit;}
 .atlas-info-link{display:block;font-size:9.5px;letter-spacing:.16em;color:var(--soft);margin-top:8px;}
 .atlas-legend{display:flex;align-items:center;gap:12px;margin-top:18px;font-size:9.5px;letter-spacing:.18em;color:var(--grey);}
 .atlas-bar{flex:0 0 140px;height:8px;background:linear-gradient(90deg,#2e2e2e,#6e6e6e,#ff3b1f);}
+
+/* ── Mobile readiness ───────────────────────────────────────────── */
+/* 16px inputs so iOS Safari doesn't zoom on focus; 44px+ tap targets. */
+@media(max-width:768px){
+  .signup-input,.library-search{font-size:16px;min-height:48px;}
+  .signup-form .cta{flex:1 1 100%;width:100%;text-align:center;}
+  .cta{min-height:48px;box-sizing:border-box;display:inline-flex;align-items:center;justify-content:center;}
+  .atlas-toggle{min-height:44px;}
+  .atlas-info{max-width:min(280px,calc(100vw - 48px));}
+  /* Expand the footer link's tap area without shifting the row. */
+  .mfoot .repo-link{display:inline-block;padding:12px 6px;margin:-12px -6px;}
+}
+
+/* Sources table stacks — the two fixed columns overflow narrow viewports. */
+@media(max-width:600px){
+  .stable,.stable tbody,.stable tr,.stable td{display:block;width:100%;}
+  .stable tr{border-top:1px solid var(--hair);padding:14px 0;}
+  .stable tr:first-child{border-top:none;}
+  .stable td{border-top:none;padding:0;}
+  .stable td.mono{white-space:normal;margin-bottom:6px;}
+  .stable td:last-child{padding:0;}
+}
+
+/* Receipt drops to a single column so long values keep breathing room. */
+@media(max-width:440px){
+  .receipt dl>div{grid-template-columns:1fr;}
+  .receipt dt{border-right:none;border-bottom:1px solid var(--hair);}
+}
