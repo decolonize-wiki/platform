@@ -1,0 +1,17 @@
+{
+  "name": "decolonize-platform",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "vitest run",
+    "fetch-article": "tsx scripts/fetch-article.ts",
+    "verify-analysis": "tsx scripts/verify-analysis.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^26.1.0",
+    "tsx": "^4.22.5",
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.9",
+    "zod": "^4.4.3"
+  }
+}
