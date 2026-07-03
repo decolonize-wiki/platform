@@ -66,3 +66,24 @@ with the methodology and data repos as siblings. One article per pass.
   analysis can be revised once the owner merges the PR. Never use a
   source in an analysis before it is merged into SOURCES.md.
 - Never claim credit for Wikipedia edits; see the engagement policy.
+
+## Methodology feedback (candidate categories)
+
+When a pass encounters a real colonial-framing pattern that NO existing
+category covers (e.g. delegitimizing labels for anti-colonial resisters),
+record it as a candidate in the session summary — do not flag it, do not
+stretch an existing category to fit.
+
+The bar for promoting a candidate to a methodology issue/PR is deliberately
+high — the methodology must not grow just because a rule exists to grow it:
+
+1. The pattern has been independently recorded in analyses of at least TWO
+   different articles (one occurrence is an anecdote, not a category).
+2. No existing category's criteria could be amended to cover it more simply
+   than adding a new one (prefer amending; DRY applies to taxonomies).
+3. It can be defined with testable "Flag when" criteria AND "Do NOT flag
+   when" exclusions, grounded in the cited decolonial literature.
+
+Candidates that meet the bar become a GitHub issue on the methodology repo
+(owner triage), then a PR per GOVERNANCE.md. Candidates that never recur
+simply age out — that is the correct outcome, not a failure.
