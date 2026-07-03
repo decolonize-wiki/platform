@@ -1,0 +1,98 @@
+{
+  "schemaVersion": 1,
+  "language": "en",
+  "article": {
+    "title": "Testland",
+    "slug": "testland",
+    "revisionId": 1361424953,
+    "fetchedAt": "2026-07-03T00:00:00Z",
+    "url": "https://en.wikipedia.org/wiki/Brazil"
+  },
+  "methodologyVersion": "v0.1",
+  "sequence": 3,
+  "model": "claude-fable-5 (claude code session; pass 1 analyst + pass 2 adversarial review applied)",
+  "status": "draft",
+  "summary": {
+    "paragraph": "The article's History section is comparatively careful: it opens with a Pre-Cabraline era, states in the lead that Brazil was inhabited before Cabral's landing, and usually names Portuguese actors. The dominant residual patterns sit elsewhere. Culture sections restart their timelines at 1500 — architecture and literature are each said to begin with the Portuguese, although the article's own history section documents mound-building cultures and millennia of habitation. The colonial slave-trade sentence deletes the buyers and carriers ('slaves purchased ... had become its largest import'), the Religion section renders coerced catechization under slavery and colonization as a 'meeting' of faiths, and the lead describes the long-inhabited Amazon as 'virgin' forest. The Etymology section, by contrast, already notes the brazilwood-trade origin of the name and records the Guarani name Pindorama.",
+    "flagCounts": {
+      "discovery-framing": 2,
+      "agentless-passive": 1,
+      "euphemism": 1,
+      "pre-contact-erasure": 2
+    }
+  },
+  "flags": [
+    {
+      "id": "brazil-1-discovery-framing-1",
+      "categoryId": "discovery-framing",
+      "quote": "most extensive virgin tropical forest",
+      "anchorBefore": "largest river system and",
+      "anchorAfter": "Brazil has diverse wildlife",
+      "explanation": "The lead calls the Amazon 'virgin' forest in the article's own voice. The Amazon basin is an inhabited region, and the article's own history section documents complex cultures there going back over 8,000 years (Santarém pottery, Marajoara mound building). 'Virgin' frames the region as untouched until outsiders arrived; the article itself uses the precise technical term, 'primary forest', in its Climate section.",
+      "rewrite": "most extensive old-growth tropical forest"
+    },
+    {
+      "id": "brazil-1-discovery-framing-2",
+      "categoryId": "discovery-framing",
+      "quote": "when Brazil was first explored, conquered and settled by the Portuguese",
+      "anchorBefore": "dates to the early 16th century,",
+      "anchorAfter": "The Portuguese built architecture",
+      "explanation": "Saying Brazil was 'first explored' by the Portuguese, without the qualifier 'first Europeans', treats the territory as unexplored before 1500. The article's own history section records at least 11,000 years of habitation; the peoples living there had explored and settled it long before the Portuguese arrived.",
+      "rewrite": "when the Portuguese reached, conquered and settled Brazil"
+    },
+    {
+      "id": "brazil-1-agentless-passive-1",
+      "categoryId": "agentless-passive",
+      "quote": "slaves purchased in Sub-Saharan Africa in the slave market of Western Africa (not only those from Portuguese allies of their colonies in Angola and Mozambique), had become its largest import",
+      "anchorBefore": "most important export, while",
+      "anchorAfter": "to cope with sugarcane plantations",
+      "explanation": "The agentless participle 'purchased' deletes the people who did the buying and shipping. Neither this sentence nor its immediate context names the buyers or carriers; the parenthetical ('not only those from Portuguese allies of their colonies in Angola and Mozambique') concerns where captives came from, not who purchased and shipped them. The responsible actors — Portuguese and Brazilian slave traders and the planters who bought captives — are historically established.",
+      "rewrite": "enslaved Africans, purchased and shipped by Portuguese slave traders from the slave markets of Western Africa (not only Portugal's colonies of Angola and Mozambique), had become its largest import"
+    },
+    {
+      "id": "brazil-1-euphemism-1",
+      "categoryId": "euphemism",
+      "quote": "developed from the meeting of the Catholic Church with the religious traditions of enslaved African peoples and indigenous peoples",
+      "anchorBefore": "Religious diversity in Brazil",
+      "anchorAfter": "This confluence of faiths",
+      "explanation": "'Meeting' ordinarily implies a voluntary, roughly symmetrical exchange. The sentence itself says one party was enslaved: catechization under Portuguese colonization was imposed, and African and Indigenous religious practice survived under and around an enforced Catholicism. The following sentence ('confluence of faiths') repeats the same softening rather than supplying a more precise description.",
+      "rewrite": "developed as enslaved African peoples and indigenous peoples sustained and adapted their religious traditions under the Catholicism imposed during Portuguese colonization"
+    },
+    {
+      "id": "brazil-1-pre-contact-erasure-1",
+      "categoryId": "pre-contact-erasure",
+      "quote": "It has a history that goes back 500 years to the time, when Pedro Álvares Cabral landed in Brazil in 1500.",
+      "anchorBefore": "influenced by Europe, especially Portugal.",
+      "anchorAfter": "Portuguese colonial architecture was the",
+      "explanation": "The architecture section starts its history at Cabral's landing and, in the next sentence, calls Portuguese colonial architecture 'the first wave of architecture to go to Brazil'. The article's own Pre-Cabraline section documents Marajoara mound building, large populations and complex social formations — building traditions in the territory long predate 1500, but the section erases them.",
+      "rewrite": "European-derived architecture in Brazil goes back 500 years, to the Portuguese colonization that followed Pedro Álvares Cabral's landing in 1500; Indigenous peoples had lived and built in the territory for millennia before that, including the mound-building Marajoara culture of the Amazon delta (AD 400–1400)."
+    },
+    {
+      "id": "brazil-1-pre-contact-erasure-2",
+      "categoryId": "pre-contact-erasure",
+      "quote": "Brazilian literature dates back to the 16th century, to the writings of the first Portuguese explorers in Brazil",
+      "anchorBefore": "=== Literature ===",
+      "anchorAfter": "such as Pero Vaz de Caminha",
+      "explanation": "The literature section begins the country's literary history with the colonizers' texts, with no mention of the oral traditions of the peoples already there. Equating 'literature' with colonial writing is the pattern Ngũgĩ describes: orature is displaced and literary history is made to start at colonization.",
+      "rewrite": "Written literature in Brazil dates back to the 16th century, to the writings of the first Portuguese explorers in Brazil; the territory's Indigenous peoples maintained long-standing oral traditions."
+    }
+  ],
+  "contextFacts": [
+    {
+      "fact": "The SlaveVoyages Trans-Atlantic Slave Trade Database documents that Portuguese- and Brazilian-flagged vessels carried the great majority of the enslaved Africans disembarked in Brazil.",
+      "sourceId": "slavevoyages"
+    },
+    {
+      "fact": "Antônio Bispo dos Santos describes colonization in Brazil as the imposition of the colonizers' monotheistic Christianity on polytheistic African and Indigenous peoples, whose religious and communal practices persisted in counter-colonial forms such as quilombos.",
+      "sourceId": "bispo-2015"
+    },
+    {
+      "fact": "Ngũgĩ wa Thiong'o, writing from the African colonial experience, describes orature — oral literature — as a long-standing literary tradition displaced when the colonizer's written canon is installed as the beginning of literary history.",
+      "sourceId": "ngugi-1986"
+    }
+  ],
+  "namingNote": {
+    "text": "The name Brazil derives from brazilwood (pau-brasil), the territory's first commercially exploited export — harvested by Tupi peoples and traded to the Portuguese; the article's etymology section states this trade origin and also records that in the Guarani language the country is called Pindorama, 'land of the palm trees'. Pindorama is a Tupi-Guarani name associated with the coastal territory and has been taken up by modern Indigenous movements in Brazil.",
+    "attestation": "Pindorama is attested in Tupi-Guarani language tradition as a name associated with the coastal territory ('land of the palm trees'); the article's own etymology section records it as the Guarani name, and modern Indigenous movements in Brazil use it. It is one attested Indigenous name among the territory's many peoples and languages, not a single pre-colonial name for the whole country."
+  }
+}
