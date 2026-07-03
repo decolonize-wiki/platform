@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 
-// Double opt-in (confirmation email) is configured on the Resend audience in the dashboard.
+// Contacts are account-wide in Resend's current API (audienceId was removed with the
+// Audiences→Contacts redesign); opt-in behavior is configured in the Resend dashboard.
 export async function POST(req: Request) {
   const { email } = await req.json().catch(() => ({}));
   if (
@@ -10,7 +11,7 @@ export async function POST(req: Request) {
   ) {
     return NextResponse.json({ error: "Enter a valid email address." }, { status: 400 });
   }
-  if (!process.env.RESEND_API_KEY || !process.env.RESEND_AUDIENCE_ID) {
+  if (!process.env.RESEND_API_KEY) {
     return NextResponse.json({ error: "Signup is not configured yet." }, { status: 503 });
   }
   const { Resend } = await import("resend");
@@ -18,7 +19,6 @@ export async function POST(req: Request) {
   try {
     const r = await resend.contacts.create({
       email,
-      audienceId: process.env.RESEND_AUDIENCE_ID,
       unsubscribed: false,
     });
     if (r.error) {

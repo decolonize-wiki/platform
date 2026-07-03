@@ -115,7 +115,7 @@ export default async function Page({ params }: { params: Promise<Params> }) {
       <section className="signup" id="signup">
         <h2 className="disp">Get the digest</h2>
         <p className="mono">
-          Occasional digest of new analyses. Double opt-in, no tracking pixels.
+          Occasional digest of new analyses. Unsubscribe anytime, no tracking pixels.
         </p>
         <EmailForm />
       </section>

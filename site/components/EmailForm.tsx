@@ -34,7 +34,7 @@ export function EmailForm() {
   if (done) {
     return (
       <p role="status" className="mono signup-status">
-        Check your inbox to confirm.
+        You&apos;re on the list.
       </p>
     );
   }
