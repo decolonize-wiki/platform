@@ -1,4 +1,5 @@
 import { ImageResponse } from "next/og";
+import { notFound } from "next/navigation";
 import { getAllAnalyses } from "../../../../lib/cached";
 import { CATEGORY_NAMES } from "../../../../components/FlagBlock";
 import type { Analysis } from "@schema/analysis";
@@ -27,9 +28,10 @@ async function find(params: Params) {
 export default async function Image({ params }: { params: Promise<Params> }) {
   const p = await params;
   const analysis = await find(p);
-  const flagCount = analysis?.flags.length ?? 0;
-  const title = analysis?.article.title ?? "decolonize.wiki";
-  const categories = Object.keys(analysis?.summary.flagCounts ?? {}) as CategoryId[];
+  if (!analysis) notFound();
+  const flagCount = analysis.flags.length;
+  const title = analysis.article.title;
+  const categories = Object.keys(analysis.summary.flagCounts) as CategoryId[];
   const attribution = `${title} · text: Wikipedia, CC BY-SA · decolonize.wiki/${p.lang}/${p.slug}/${p.seq}?utm_source=card&utm_medium=og`;
 
   return new ImageResponse(

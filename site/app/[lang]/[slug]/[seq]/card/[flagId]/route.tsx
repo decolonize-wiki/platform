@@ -28,6 +28,11 @@ export async function GET(
   const index = analysis.flags.indexOf(flag);
   const attribution = `${analysis.article.title} · text: Wikipedia, CC BY-SA · decolonize.wiki/${p.lang}/${p.slug}/${p.seq}?utm_source=card&utm_medium=flag`;
 
+  const quoteSize =
+    flag.quote.length > 280 ? 40 : flag.quote.length > 140 ? 52 : 68;
+  const rewriteSize =
+    flag.rewrite.length > 180 ? 30 : flag.rewrite.length > 100 ? 34 : 40;
+
   return new ImageResponse(
     (
       <div
@@ -68,8 +73,10 @@ export async function GET(
               display: "flex",
               fontFamily: "Georgia, serif",
               fontStyle: "italic",
-              fontSize: flag.quote.length > 140 ? 52 : 68,
+              fontSize: quoteSize,
               lineHeight: 1.15,
+              textDecoration: "line-through",
+              textDecorationColor: HOT,
             }}
           >
             {`“${flag.quote}”`}
@@ -95,7 +102,7 @@ export async function GET(
                 backgroundColor: HOT,
                 color: BLACK,
                 padding: "24px 28px",
-                fontSize: 40,
+                fontSize: rewriteSize,
                 lineHeight: 1.2,
                 fontWeight: 700,
                 fontFamily: "Georgia, serif",
