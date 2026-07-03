@@ -11,6 +11,8 @@ const MISSION =
 
 type Params = { lang: string };
 
+export const dynamicParams = false;
+
 export function generateStaticParams(): Params[] {
   return [{ lang: "en" }];
 }
@@ -39,7 +41,11 @@ export default async function Page({ params }: { params: Promise<Params> }) {
 
   const flagsTotal = latest.reduce((n, a) => n + a.flags.length, 0);
   const categories = new Set(latest.flatMap((a) => a.flags.map((f) => f.categoryId)));
-  const version = latest[0]?.methodologyVersion ?? "v0.1";
+  const version =
+    latest
+      .map((a) => a.methodologyVersion)
+      .sort((a, b) => a.localeCompare(b, undefined, { numeric: true }))
+      .at(-1) ?? "v0.1";
 
   const entries = latest.map((a) => ({
     title: a.article.title,
@@ -110,7 +116,6 @@ export default async function Page({ params }: { params: Promise<Params> }) {
           Not affiliated with the Wikimedia Foundation · analyses critique
           articles, not editors
         </span>
-        <a href="https://github.com/sponsors">Donate</a>
       </footer>
     </>
   );

@@ -29,6 +29,11 @@ export function Library({ entries }: { entries: LibraryEntry[] }) {
         value={query}
         onChange={(e) => setQuery(e.target.value)}
       />
+      <p role="status" aria-live="polite" className="library-status mono">
+        {q && shown.length === 0
+          ? `No analyses match “${query}”.`
+          : `${shown.length} ${shown.length === 1 ? "analysis" : "analyses"} shown`}
+      </p>
       <ul className="library-list">
         {shown.map((e) => (
           <li key={`${e.lang}/${e.slug}`}>
@@ -42,9 +47,6 @@ export function Library({ entries }: { entries: LibraryEntry[] }) {
             </Link>
           </li>
         ))}
-        {shown.length === 0 ? (
-          <li className="library-empty mono">No analyses match “{query}”.</li>
-        ) : null}
       </ul>
     </div>
   );
