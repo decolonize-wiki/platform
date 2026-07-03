@@ -29,17 +29,19 @@ export default function Image() {
         <div
           style={{
             display: "flex",
-            alignItems: "baseline",
-            fontSize: 168,
+            alignItems: "flex-start",
+            gap: 24,
+            fontSize: 130,
             lineHeight: 1,
             fontWeight: 800,
-            letterSpacing: -6,
+            letterSpacing: -2,
             textTransform: "uppercase",
             whiteSpace: "nowrap",
           }}
         >
+          {/* the ? is a sibling flex item, same size — mixed font sizes make Satori misplace glyphs */}
           <span>&ldquo;Discovered&rdquo;</span>
-          <span style={{ color: HOT, fontSize: 200 }}>?</span>
+          <span style={{ color: HOT }}>?</span>
         </div>
         <div
           style={{
