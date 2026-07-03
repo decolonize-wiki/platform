@@ -2,10 +2,12 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import Link from "next/link";
 import { getCategories, getSources } from "../../../lib/methodology";
+import { JsonLd } from "../../../components/JsonLd";
 
 type Params = { lang: string };
 
 const REPO = "https://github.com/decolonize-wiki/methodology";
+const SITE = "https://decolonize.wiki";
 
 export const dynamicParams = false;
 
@@ -14,8 +16,9 @@ export function generateStaticParams(): Params[] {
 }
 
 export const metadata: Metadata = {
-  title: "Methodology — decolonize.wiki",
+  title: "Methodology",
   description: "The versioned, cited methodology behind every flag.",
+  alternates: { canonical: "/en/methodology" },
 };
 
 function renderInline(text: string): ReactNode[] {
@@ -74,8 +77,22 @@ function renderMarkdown(md: string): ReactNode[] {
 export default async function Page() {
   const [categories, sources] = await Promise.all([getCategories(), getSources()]);
 
+  const webPageLd = {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    name: "Methodology — decolonize.wiki",
+    url: `${SITE}/en/methodology`,
+    description:
+      "The versioned, cited decolonial methodology behind every flag.",
+    inLanguage: "en",
+    license: "https://creativecommons.org/licenses/by-sa/4.0/",
+    citation: sources.map((s) => s.citation),
+    isPartOf: { "@type": "WebSite", name: "decolonize.wiki", url: SITE },
+  };
+
   return (
     <>
+      <JsonLd data={webPageLd} />
       <header className="mast">
         <Link href="/en" className="disp" style={{ textDecoration: "none" }}>
           Decolonize.wiki

@@ -3,6 +3,10 @@ import { notFound } from "next/navigation";
 import { getAllAnalyses, getLiveRevisionIds } from "../../../../lib/cached";
 import { latestFor } from "../../../../lib/data";
 import { AnalysisView } from "../../../../components/AnalysisView";
+import { JsonLd } from "../../../../components/JsonLd";
+import { analysisJsonLd } from "../../../../lib/structured-data";
+
+const SITE = "https://decolonize.wiki";
 
 type Params = { lang: string; slug: string; seq: string };
 
@@ -42,13 +46,14 @@ export async function generateMetadata({
   const isLatest =
     latestFor(all, p.lang, p.slug)?.sequence === analysis.sequence;
   return {
-    title: `${analysis.article.title} — decolonize.wiki analysis #${analysis.sequence}`,
+    title: `${analysis.article.title} — decolonial analysis #${analysis.sequence}`,
     description: firstSentence,
     alternates: {
       canonical: isLatest
         ? `/${p.lang}/${p.slug}`
         : `/${p.lang}/${p.slug}/${p.seq}`,
     },
+    openGraph: { type: "article" },
   };
 }
 
@@ -59,11 +64,21 @@ export default async function Page({ params }: { params: Promise<Params> }) {
   const latest = latestFor(all, p.lang, p.slug);
   const latestSeq = latest?.sequence ?? analysis.sequence;
   const live = await getLiveRevisionIds();
+  const isLatest = latest?.sequence === analysis.sequence;
+  const pageUrl = isLatest
+    ? `${SITE}/${p.lang}/${p.slug}`
+    : `${SITE}/${p.lang}/${p.slug}/${p.seq}`;
+  const imageUrl = `${SITE}/${p.lang}/${p.slug}/${p.seq}/opengraph-image`;
   return (
-    <AnalysisView
-      analysis={analysis}
-      liveRevisionId={live.get(analysis.article.title)}
-      latestSeq={latestSeq}
-    />
+    <>
+      {analysisJsonLd(analysis, pageUrl, imageUrl).map((ld, i) => (
+        <JsonLd key={i} data={ld} />
+      ))}
+      <AnalysisView
+        analysis={analysis}
+        liveRevisionId={live.get(analysis.article.title)}
+        latestSeq={latestSeq}
+      />
+    </>
   );
 }
