@@ -69,34 +69,59 @@ export function Atlas({ entries }: { entries: AtlasEntry[] }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const boxRef = useRef<HTMLDivElement>(null);
   const [southUp, setSouthUp] = useState(true);
-  const [active, setActive] = useState<AtlasEntry | null>(null);
-  const [pointer, setPointer] = useState<{ x: number; y: number } | null>(null);
+  const [active, setActive] = useState<AtlasEntry[]>([]);
+  const [pointer, setPointer] = useState<{
+    x: number;
+    y: number;
+    flipX: boolean;
+    flipY: boolean;
+  } | null>(null);
 
   const maxFlags = useMemo(
     () => Math.max(1, ...entries.map((e) => e.flagCount)),
     [entries],
   );
 
-  // Per-cell heat + which entry owns each lit cell (for hit-testing).
+  const intensityOf = useCallback(
+    (e: AtlasEntry) => (e.flagCount === 0 ? 0.5 : 0.6 + 0.4 * (e.flagCount / maxFlags)),
+    [maxFlags],
+  );
+
+  // Per-cell heat + the entries occupying each lit cell (a stack, for hit-testing).
+  // Articles sharing a region are spread across distinct cells of that region so
+  // each is reachable by the mouse; cells shared across DIFFERENT regions (e.g.
+  // Scramble-for-Africa over West Africa) keep every occupant, so the info box
+  // can list them all rather than arbitrarily picking one.
   const { heat, owner } = useMemo(() => {
     const heat = new Map<string, number>();
-    const owner = new Map<string, AtlasEntry>();
+    const owner = new Map<string, AtlasEntry[]>();
     for (const [r, c0, c1] of LAND) {
       for (let c = c0; c <= c1; c++) heat.set(key(r, c), 0.35);
     }
+    const add = (k: string, e: AtlasEntry) => {
+      const intensity = intensityOf(e);
+      if ((heat.get(k) ?? 0) <= intensity) heat.set(k, intensity);
+      const stack = owner.get(k);
+      if (stack) stack.push(e);
+      else owner.set(k, [e]);
+    };
+    // Group by region, then hand each entry a round-robin subset of that
+    // region's cells so co-located articles don't fully overlap.
+    const byRegion = new Map<string, AtlasEntry[]>();
     for (const e of entries) {
-      const intensity =
-        e.flagCount === 0 ? 0.5 : 0.6 + 0.4 * (e.flagCount / maxFlags);
-      for (const [r, c0, c1] of REGION_CELLS[e.region] ?? []) {
-        for (let c = c0; c <= c1; c++) {
-          const k = key(r, c);
-          if ((heat.get(k) ?? 0) <= intensity) heat.set(k, intensity);
-          owner.set(k, e);
-        }
+      const g = byRegion.get(e.region);
+      if (g) g.push(e);
+      else byRegion.set(e.region, [e]);
+    }
+    for (const [region, group] of byRegion) {
+      const cells: string[] = [];
+      for (const [r, c0, c1] of REGION_CELLS[region] ?? []) {
+        for (let c = c0; c <= c1; c++) cells.push(key(r, c));
       }
+      cells.forEach((k, i) => add(k, group[i % group.length]));
     }
     return { heat, owner };
-  }, [entries, maxFlags]);
+  }, [entries, intensityOf]);
 
   const displayRow = useCallback((r: number) => (southUp ? ROWS - 1 - r : r), [southUp]);
 
@@ -114,12 +139,16 @@ export function Atlas({ entries }: { entries: AtlasEntry[] }) {
     const cssH = (rect.width * ROWS) / COLS;
     ctx.clearRect(0, 0, rect.width, cssH);
     const rad = cw * 0.32;
-    const activeCells = active
-      ? new Set((REGION_CELLS[active.region] ?? []).flatMap(([r, a, b]) => {
-          const out: string[] = [];
-          for (let c = a; c <= b; c++) out.push(key(r, c));
-          return out;
-        }))
+    const activeCells = active.length
+      ? new Set(
+          active.flatMap((e) =>
+            (REGION_CELLS[e.region] ?? []).flatMap(([r, a, b]) => {
+              const out: string[] = [];
+              for (let c = a; c <= b; c++) out.push(key(r, c));
+              return out;
+            }),
+          ),
+        )
       : null;
     for (const [k, h] of heat) {
       const [r, c] = k.split(",").map(Number);
@@ -143,34 +172,44 @@ export function Atlas({ entries }: { entries: AtlasEntry[] }) {
     return () => ro.disconnect();
   }, [draw]);
 
-  const entryAt = useCallback(
-    (clientX: number, clientY: number): AtlasEntry | null => {
+  const entriesAt = useCallback(
+    (clientX: number, clientY: number): AtlasEntry[] => {
       const canvas = canvasRef.current;
-      if (!canvas) return null;
+      if (!canvas) return [];
       const rect = canvas.getBoundingClientRect();
       const cw = rect.width / COLS;
       const c = Math.floor((clientX - rect.left) / cw);
       const dr = Math.floor((clientY - rect.top) / cw);
       const r = southUp ? ROWS - 1 - dr : dr;
-      return owner.get(key(r, c)) ?? null;
+      return owner.get(key(r, c)) ?? [];
     },
     [owner, southUp],
   );
 
   const onMove = (ev: React.MouseEvent<HTMLDivElement>) => {
-    const e = entryAt(ev.clientX, ev.clientY);
-    setActive(e);
-    if (e) {
+    // Keep the current box open while the pointer is over it (its rows are links).
+    if ((ev.target as HTMLElement).closest(".atlas-info")) return;
+    const found = entriesAt(ev.clientX, ev.clientY);
+    setActive(found);
+    if (found.length) {
       const host = boxRef.current?.getBoundingClientRect();
-      setPointer({ x: ev.clientX - (host?.left ?? 0), y: ev.clientY - (host?.top ?? 0) });
+      const x = ev.clientX - (host?.left ?? 0);
+      const y = ev.clientY - (host?.top ?? 0);
+      setPointer({
+        x,
+        y,
+        flipX: (host?.width ?? 0) - x < 300,
+        flipY: (host?.height ?? 0) - y < 120,
+      });
     } else {
       setPointer(null);
     }
   };
 
   const onClick = (ev: React.MouseEvent<HTMLDivElement>) => {
-    const e = entryAt(ev.clientX, ev.clientY);
-    if (e) router.push(`/${e.lang}/${e.slug}`);
+    if ((ev.target as HTMLElement).closest(".atlas-info")) return; // links handle it
+    const found = entriesAt(ev.clientX, ev.clientY);
+    if (found.length) router.push(`/${found[0].lang}/${found[0].slug}`);
   };
 
   return (
@@ -192,29 +231,41 @@ export function Atlas({ entries }: { entries: AtlasEntry[] }) {
         className="atlas-map"
         onMouseMove={onMove}
         onMouseLeave={() => {
-          setActive(null);
+          setActive([]);
           setPointer(null);
         }}
         onClick={onClick}
-        style={{ cursor: active ? "pointer" : "default" }}
+        style={{ cursor: active.length ? "pointer" : "default" }}
       >
         <canvas ref={canvasRef} className="atlas-canvas" aria-hidden="true" />
-        {active && pointer && (
+        {active.length > 0 && pointer && (
           <div
             className="atlas-info"
-            style={{ left: pointer.x, top: pointer.y }}
-            role="presentation"
+            style={{
+              left: pointer.x,
+              top: pointer.y,
+              transform: `translate(${pointer.flipX ? "calc(-100% - 14px)" : "14px"}, ${pointer.flipY ? "calc(-100% - 14px)" : "14px"})`,
+            }}
           >
-            <span className="disp atlas-info-title">{active.title}</span>
-            <span
-              className={`mono atlas-info-meta${active.flagCount === 0 ? " clean" : ""}`}
-            >
-              {active.flagCount === 0
-                ? "Clean — 0 flags"
-                : `${active.flagCount} ${active.flagCount === 1 ? "flag" : "flags"} · ${active.categories.join(", ")}`}
-            </span>
-            <span className="mono atlas-info-region">{REGION_NAMES[active.region] ?? ""}</span>
-            <span className="mono atlas-info-link">read the analysis →</span>
+            {active.map((e, i) => (
+              <Link
+                key={`${e.lang}/${e.slug}`}
+                href={`/${e.lang}/${e.slug}`}
+                className={`atlas-info-row${i > 0 ? " stacked" : ""}`}
+              >
+                <span className="disp atlas-info-title">{e.title}</span>
+                <span
+                  className={`mono atlas-info-meta${e.flagCount === 0 ? " clean" : ""}`}
+                >
+                  {e.flagCount === 0
+                    ? "Clean — 0 flags"
+                    : `${e.flagCount} ${e.flagCount === 1 ? "flag" : "flags"} · ${e.categories.join(", ")}`}
+                </span>
+                <span className="mono atlas-info-region">
+                  {REGION_NAMES[e.region] ?? ""} · read the analysis →
+                </span>
+              </Link>
+            ))}
           </div>
         )}
       </div>

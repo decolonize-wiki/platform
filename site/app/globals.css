@@ -130,7 +130,10 @@ a{color:inherit;}
 .atlas-note{font-size:9.5px;letter-spacing:.16em;color:var(--grey);}
 .atlas-map{position:relative;width:100%;}
 .atlas-canvas{display:block;width:100%;}
-.atlas-info{position:absolute;transform:translate(14px,14px);pointer-events:none;background:var(--black);border:1px solid #3a3a3a;padding:12px 14px;max-width:280px;z-index:2;}
+.atlas-info{position:absolute;top:0;left:0;background:var(--black);border:1px solid #3a3a3a;padding:4px 14px;max-width:280px;z-index:2;}
+.atlas-info-row{display:block;text-decoration:none;padding:10px 0;}
+.atlas-info-row.stacked{border-top:1px solid #3a3a3a;}
+.atlas-info-row:hover .atlas-info-title{color:var(--hot);}
 .atlas-info-title{display:block;font-size:20px;letter-spacing:.02em;color:var(--paper);line-height:1;}
 .atlas-info-meta{display:block;font-size:10px;letter-spacing:.16em;color:var(--hot);margin-top:8px;}
 .atlas-info-meta.clean{color:var(--grey);}
