@@ -1,0 +1,150 @@
+import { ImageResponse } from "next/og";
+import { getAllAnalyses } from "../../../../lib/cached";
+import { CATEGORY_NAMES } from "../../../../components/FlagBlock";
+import type { Analysis } from "@schema/analysis";
+
+export const alt = "decolonize.wiki analysis verdict card";
+export const size = { width: 1200, height: 630 };
+export const contentType = "image/png";
+
+type Params = { lang: string; slug: string; seq: string };
+type CategoryId = Analysis["flags"][number]["categoryId"];
+
+const BLACK = "#0d0d0d";
+const PAPER = "#f4f2ec";
+const HOT = "#ff3b1f";
+
+async function find(params: Params) {
+  const all = await getAllAnalyses();
+  return all.find(
+    (a) =>
+      a.language === params.lang &&
+      a.article.slug === params.slug &&
+      String(a.sequence) === params.seq,
+  );
+}
+
+export default async function Image({ params }: { params: Promise<Params> }) {
+  const p = await params;
+  const analysis = await find(p);
+  const flagCount = analysis?.flags.length ?? 0;
+  const title = analysis?.article.title ?? "decolonize.wiki";
+  const categories = Object.keys(analysis?.summary.flagCounts ?? {}) as CategoryId[];
+  const attribution = `${title} · text: Wikipedia, CC BY-SA · decolonize.wiki/${p.lang}/${p.slug}/${p.seq}?utm_source=card&utm_medium=og`;
+
+  return new ImageResponse(
+    (
+      <div
+        style={{
+          width: "100%",
+          height: "100%",
+          display: "flex",
+          flexDirection: "column",
+          backgroundColor: BLACK,
+          color: PAPER,
+          fontFamily: "sans-serif",
+        }}
+      >
+        <div
+          style={{
+            flex: 1,
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "space-between",
+            padding: "56px 64px 40px",
+          }}
+        >
+          <div style={{ display: "flex", flexDirection: "column" }}>
+            <div
+              style={{
+                display: "flex",
+                fontSize: 26,
+                letterSpacing: 6,
+                textTransform: "uppercase",
+                color: HOT,
+                fontWeight: 800,
+              }}
+            >
+              decolonize.wiki
+            </div>
+            <div
+              style={{
+                display: "flex",
+                marginTop: 20,
+                fontSize: title.length > 22 ? 96 : 128,
+                lineHeight: 1,
+                fontWeight: 800,
+                letterSpacing: -3,
+                textTransform: "uppercase",
+              }}
+            >
+              {title}
+            </div>
+          </div>
+
+          <div style={{ display: "flex", alignItems: "flex-end", gap: 28 }}>
+            <div
+              style={{
+                display: "flex",
+                fontSize: 200,
+                lineHeight: 0.85,
+                fontWeight: 800,
+                color: HOT,
+                letterSpacing: -6,
+              }}
+            >
+              {flagCount}
+            </div>
+            <div
+              style={{
+                display: "flex",
+                fontSize: 40,
+                fontWeight: 800,
+                letterSpacing: 2,
+                textTransform: "uppercase",
+                paddingBottom: 22,
+              }}
+            >
+              {flagCount === 0 ? "Clean — 0 flags" : flagCount === 1 ? "Flag" : "Flags"}
+            </div>
+          </div>
+
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 12 }}>
+            {categories.map((c) => (
+              <div
+                key={c}
+                style={{
+                  display: "flex",
+                  border: `2px solid ${PAPER}`,
+                  borderRadius: 4,
+                  padding: "8px 16px",
+                  fontSize: 22,
+                  fontWeight: 700,
+                  letterSpacing: 1,
+                  textTransform: "uppercase",
+                }}
+              >
+                {CATEGORY_NAMES[c]}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div
+          style={{
+            display: "flex",
+            width: "100%",
+            borderTop: `2px solid ${HOT}`,
+            padding: "18px 64px",
+            fontSize: 22,
+            fontFamily: "monospace",
+            color: PAPER,
+          }}
+        >
+          {attribution}
+        </div>
+      </div>
+    ),
+    { ...size },
+  );
+}
