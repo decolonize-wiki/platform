@@ -11,9 +11,10 @@
 
 import { spawnSync } from "node:child_process";
 import { mkdir, rm } from "node:fs/promises";
-import { join } from "node:path";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
 
-const here = new URL(".", import.meta.url).pathname;
+const here = dirname(fileURLToPath(import.meta.url));
 const siteRoot = join(here, "..");
 
 async function fetchRepo(name, url, dest) {
@@ -42,5 +43,7 @@ async function fetchRepo(name, url, dest) {
   console.log(`[prebuild-data] ${name}: extracted to ${dest}`);
 }
 
+// DATA_DIR=.data / METHODOLOGY_DIR=.methodology are resolved relative to cwd,
+// which is assumed to be site/ (matches `npm -w site` and the Vercel Root Directory).
 await fetchRepo("data", process.env.DATA_TARBALL_URL, join(siteRoot, ".data"));
 await fetchRepo("methodology", process.env.METHODOLOGY_TARBALL_URL, join(siteRoot, ".methodology"));

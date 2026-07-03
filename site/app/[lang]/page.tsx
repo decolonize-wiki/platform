@@ -66,6 +66,7 @@ export default async function Page({ params }: { params: Promise<Params> }) {
         </span>
       </header>
 
+      <main id="main">
       <section className="hero">
         <h1 className="disp">
           {"Disco­vered"}
@@ -118,6 +119,7 @@ export default async function Page({ params }: { params: Promise<Params> }) {
         </p>
         <EmailForm />
       </section>
+      </main>
 
       <footer className="mfoot">
         <span>An open project · AGPL / CC BY-SA</span>

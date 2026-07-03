@@ -31,6 +31,7 @@ export function AnalysisView({
         </span>
       </header>
 
+      <main id="main">
       {superseded ? (
         <p className="banner mono" style={{ margin: 0 }}>
           Superseded —{" "}
@@ -107,6 +108,7 @@ export function AnalysisView({
       ) : null}
 
       <Receipt analysis={analysis} liveRevisionId={liveRevisionId} />
+      </main>
 
       <footer className="mfoot">
         <span>

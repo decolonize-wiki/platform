@@ -85,6 +85,7 @@ export default async function Page() {
         </span>
       </header>
 
+      <main id="main">
       <section className="hero">
         <div className="eyebrow">
           <span>The methodology</span>
@@ -136,6 +137,7 @@ export default async function Page() {
           <a href={REPO}>The methodology repository →</a>
         </p>
       </section>
+      </main>
 
       <footer className="mfoot">
         <span>An open project · AGPL / CC BY-SA</span>

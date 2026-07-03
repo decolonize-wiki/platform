@@ -6,14 +6,19 @@ export function dataDir(): string {
   return process.env.DATA_DIR ?? join(process.cwd(), "..", "..", "decolonize-data");
 }
 
+async function subdirs(dir: string): Promise<string[]> {
+  const entries = await readdir(dir, { withFileTypes: true });
+  return entries.filter((e) => e.isDirectory()).map((e) => e.name);
+}
+
 export async function loadAllAnalyses(dir = dataDir()): Promise<Analysis[]> {
   const root = join(dir, "analyses");
   const out: Analysis[] = [];
-  for (const lang of await readdir(root)) {
-    for (const slug of await readdir(join(root, lang))) {
-      for (const f of await readdir(join(root, lang, slug))) {
-        if (!f.endsWith(".json")) continue;
-        const a = AnalysisSchema.parse(JSON.parse(await readFile(join(root, lang, slug, f), "utf8")));
+  for (const lang of await subdirs(root)) {
+    for (const slug of await subdirs(join(root, lang))) {
+      for (const entry of await readdir(join(root, lang, slug), { withFileTypes: true })) {
+        if (!entry.isFile() || !entry.name.endsWith(".json")) continue;
+        const a = AnalysisSchema.parse(JSON.parse(await readFile(join(root, lang, slug, entry.name), "utf8")));
         if (a.status === "draft") continue;
         out.push(a);
       }

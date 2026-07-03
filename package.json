@@ -5,6 +5,7 @@
   "workspaces": ["site"],
   "scripts": {
     "test": "vitest run",
+    "build": "npm run build -w site",
     "fetch-article": "tsx scripts/fetch-article.ts",
     "verify-analysis": "tsx scripts/verify-analysis.ts"
   },
