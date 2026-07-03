@@ -4,6 +4,8 @@ import { getAllAnalyses } from "../../lib/cached";
 import { latestFor } from "../../lib/data";
 import { CATEGORY_NAMES } from "../../components/FlagBlock";
 import { Library } from "../../components/Library";
+import { Atlas } from "../../components/Atlas";
+import { SLUG_REGION } from "../../lib/atlas-regions";
 import { EmailForm } from "../../components/EmailForm";
 import type { Analysis } from "@schema/analysis";
 
@@ -56,6 +58,17 @@ export default async function Page({ params }: { params: Promise<Params> }) {
     flagCount: a.flags.length,
     categories: [...new Set(a.flags.map((f) => CATEGORY_NAMES[f.categoryId]))],
   }));
+
+  const atlasEntries = latest
+    .map((a) => ({
+      slug: a.article.slug,
+      title: a.article.title,
+      flagCount: a.flags.length,
+      categories: [...new Set(a.flags.map((f) => CATEGORY_NAMES[f.categoryId]))],
+      lang: a.language,
+      region: SLUG_REGION[a.article.slug] ?? "",
+    }))
+    .filter((e) => e.region !== "");
 
   return (
     <>
@@ -110,6 +123,15 @@ export default async function Page({ params }: { params: Promise<Params> }) {
         </div>
         <h2>The archive.</h2>
         <Library entries={entries} />
+      </section>
+
+      <section className="atlas-section" id="atlas">
+        <div className="eyebrow-a">
+          <span>The atlas</span>
+          <span>Maps articles, not borders</span>
+        </div>
+        <h2 className="disp">The record, mapped.</h2>
+        <Atlas entries={atlasEntries} />
       </section>
 
       <section className="signup" id="signup">
