@@ -53,7 +53,8 @@ export const AnalysisSchema = z
         z.number().int().positive(),
       ),
     }),
-    flags: z.array(FlagSchema).min(1),
+    // empty = a "model article": both passes found nothing to flag — a publishable finding
+    flags: z.array(FlagSchema),
     contextFacts: z.array(ContextFactSchema).max(3),
     namingNote: NamingNoteSchema.optional(),
   })
