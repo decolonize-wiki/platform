@@ -19,6 +19,43 @@ describe("liveRevisionIds", () => {
     expect(map.get("Brazil")).toBe(999);
   });
 
+  it("keys results by the caller's original title across normalization", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () =>
+        new Response(
+          JSON.stringify({
+            query: {
+              normalized: [{ from: "brazil", to: "Brazil" }],
+              pages: [{ title: "Brazil", revisions: [{ revid: 999 }] }],
+            },
+          }),
+        ),
+      ),
+    );
+    const map = await liveRevisionIds(["brazil"]);
+    expect(map.get("brazil")).toBe(999);
+  });
+
+  it("chains normalization into redirects back to the original title", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () =>
+        new Response(
+          JSON.stringify({
+            query: {
+              normalized: [{ from: "brazil", to: "Brazil" }],
+              redirects: [{ from: "Brazil", to: "Federative Republic" }],
+              pages: [{ title: "Federative Republic", revisions: [{ revid: 1234 }] }],
+            },
+          }),
+        ),
+      ),
+    );
+    const map = await liveRevisionIds(["brazil"]);
+    expect(map.get("brazil")).toBe(1234);
+  });
+
   it("returns an empty map on API failure (site still builds)", async () => {
     vi.stubGlobal("fetch", vi.fn(async () => new Response("", { status: 503 })));
     expect((await liveRevisionIds(["Brazil"])).size).toBe(0);
