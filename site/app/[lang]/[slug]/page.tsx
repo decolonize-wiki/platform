@@ -41,7 +41,11 @@ export async function generateMetadata({
     title: `${analysis.article.title} — decolonial analysis #${analysis.sequence}`,
     description: firstSentence,
     alternates: { canonical: `/${p.lang}/${p.slug}` },
-    openGraph: { type: "article" },
+    // the latest-alias segment has no opengraph-image.tsx of its own — point shares at the verdict card
+    openGraph: {
+      type: "article",
+      images: [`/${p.lang}/${p.slug}/${analysis.sequence}/opengraph-image`],
+    },
   };
 }
 
