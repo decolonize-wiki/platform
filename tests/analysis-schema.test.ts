@@ -36,6 +36,20 @@ const valid = {
 };
 
 describe("AnalysisSchema", () => {
+  it("accepts a zero-flag analysis (a clean article is a publishable finding)", () => {
+    const clean = {
+      ...valid,
+      summary: { ...valid.summary, flagCounts: {} },
+      flags: [],
+    };
+    expect(AnalysisSchema.safeParse(clean).success).toBe(true);
+  });
+
+  it("still rejects zero flags with non-empty flagCounts", () => {
+    const mismatched = { ...valid, flags: [] };
+    expect(AnalysisSchema.safeParse(mismatched).success).toBe(false);
+  });
+
   it("accepts a valid analysis", () => {
     expect(AnalysisSchema.safeParse(valid).success).toBe(true);
   });
