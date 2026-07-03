@@ -1,0 +1,22 @@
+{
+  "name": "decolonize-site",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "next": "^15",
+    "next-intl": "^3",
+    "react": "^19",
+    "react-dom": "^19",
+    "zod": "^4",
+    "@vercel/analytics": "^1",
+    "resend": "^4"
+  },
+  "devDependencies": {
+    "@types/react": "^19",
+    "typescript": "^6"
+  }
+}

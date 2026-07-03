@@ -2,6 +2,7 @@
   "name": "decolonize-platform",
   "private": true,
   "type": "module",
+  "workspaces": ["site"],
   "scripts": {
     "test": "vitest run",
     "fetch-article": "tsx scripts/fetch-article.ts",
