@@ -21,7 +21,7 @@ export function generateStaticParams(): Params[] {
 }
 
 export const metadata: Metadata = {
-  title: "decolonize.wiki — the receipts on colonial framing",
+  title: { absolute: "decolonize.wiki — the receipts on colonial framing" },
   description: MISSION,
 };
 
