@@ -70,6 +70,17 @@ a{color:inherit;}
 .hero h1 .q{color:var(--hot);}
 .cta{display:inline-block;border:1px solid var(--soft);color:var(--paper);font-family:ui-monospace,'Courier New',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;padding:13px 22px;text-decoration:none;transition:background .15s ease,color .15s ease,border-color .15s ease;}
 .cta:hover{background:var(--hot);color:var(--black);border-color:var(--hot);}
+.cta:disabled{opacity:.55;cursor:default;}
+.cta:disabled:hover{background:transparent;color:var(--paper);border-color:var(--soft);}
+
+.signup{background:var(--black);color:var(--paper);padding:clamp(40px,6vw,72px) clamp(18px,4vw,44px);border-top:1px solid var(--hair);}
+.signup h2{font-family:'Arial Narrow',Haettenschweiler,Impact,sans-serif;font-weight:700;text-transform:uppercase;font-size:clamp(30px,5.5vw,56px);line-height:.95;margin:0;letter-spacing:-.01em;}
+.signup p.mono{font-size:10.5px;letter-spacing:.2em;color:var(--grey);margin:16px 0 0;max-width:52ch;}
+.signup-form{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-top:26px;}
+.signup-input{flex:1 1 260px;box-sizing:border-box;background:transparent;color:var(--paper);border:1px solid var(--soft);font-family:ui-monospace,'Courier New',monospace;font-size:12px;letter-spacing:.14em;padding:13px 16px;}
+.signup-input::placeholder{color:var(--grey);}
+.signup-status{font-size:11px;letter-spacing:.2em;color:var(--paper);margin:26px 0 0;}
+.signup-error{flex-basis:100%;font-size:10.5px;letter-spacing:.14em;color:var(--hot);margin:0;}
 
 .library{margin-top:clamp(30px,4vw,44px);}
 .library-search{width:100%;box-sizing:border-box;background:transparent;color:var(--black);border:1px solid var(--soft);font-size:12px;letter-spacing:.18em;padding:14px 16px;margin-bottom:8px;}

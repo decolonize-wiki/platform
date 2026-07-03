@@ -4,6 +4,7 @@ import { getAllAnalyses } from "../../lib/cached";
 import { latestFor } from "../../lib/data";
 import { CATEGORY_NAMES } from "../../components/FlagBlock";
 import { Library } from "../../components/Library";
+import { EmailForm } from "../../components/EmailForm";
 import type { Analysis } from "@schema/analysis";
 
 const MISSION =
@@ -108,6 +109,14 @@ export default async function Page({ params }: { params: Promise<Params> }) {
         </div>
         <h2>The archive.</h2>
         <Library entries={entries} />
+      </section>
+
+      <section className="signup" id="signup">
+        <h2 className="disp">Get the digest</h2>
+        <p className="mono">
+          Occasional digest of new analyses. Double opt-in, no tracking pixels.
+        </p>
+        <EmailForm />
       </section>
 
       <footer className="mfoot">
