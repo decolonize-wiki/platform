@@ -60,4 +60,38 @@ describe("liveRevisionIds", () => {
     vi.stubGlobal("fetch", vi.fn(async () => new Response("", { status: 503 })));
     expect((await liveRevisionIds(["Brazil"])).size).toBe(0);
   });
+
+  it("keeps earlier batches when a later batch fails", async () => {
+    let call = 0;
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => {
+        call += 1;
+        if (call === 1) {
+          return new Response(
+            JSON.stringify({
+              query: { pages: [{ title: "First", revisions: [{ revid: 1 }] }] },
+            }),
+          );
+        }
+        return new Response("", { status: 503 });
+      }),
+    );
+    const titles = [...Array(60)].map((_, i) => (i === 0 ? "First" : `T${i}`));
+    const map = await liveRevisionIds(titles);
+    expect(map.get("First")).toBe(1);
+  });
+
+  it("targets the wiki host for the requested language", async () => {
+    let requested = "";
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async (input: string) => {
+        requested = String(input);
+        return new Response(JSON.stringify({ query: { pages: [] } }));
+      }),
+    );
+    await liveRevisionIds(["Brasil"], "pt");
+    expect(requested).toContain("https://pt.wikipedia.org/w/api.php");
+  });
 });

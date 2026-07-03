@@ -8,6 +8,11 @@ export const alt = "decolonize.wiki analysis verdict card";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
+// Prerender the card at build time (params inherited from the route segment's
+// generateStaticParams) so it never reads the data repo at request time on
+// Vercel, where env-driven fs reads aren't file-traced into the function bundle.
+export const dynamic = "force-static";
+
 type Params = { lang: string; slug: string; seq: string };
 type CategoryId = Analysis["flags"][number]["categoryId"];
 
@@ -31,7 +36,9 @@ export default async function Image({ params }: { params: Promise<Params> }) {
   if (!analysis) notFound();
   const flagCount = analysis.flags.length;
   const title = analysis.article.title;
-  const categories = Object.keys(analysis.summary.flagCounts) as CategoryId[];
+  const categories = [
+    ...new Set(analysis.flags.map((f) => f.categoryId)),
+  ] as CategoryId[];
   const attribution = `${title} · text: Wikipedia, CC BY-SA · decolonize.wiki/${p.lang}/${p.slug}/${p.seq}?utm_source=card&utm_medium=og`;
 
   return new ImageResponse(

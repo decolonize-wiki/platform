@@ -1,7 +1,10 @@
-const API = "https://en.wikipedia.org/w/api.php";
 const UA = "decolonize.wiki site build (https://github.com/decolonize-wiki/platform)";
 
-export async function liveRevisionIds(titles: string[]): Promise<Map<string, number>> {
+export async function liveRevisionIds(
+  titles: string[],
+  lang = "en",
+): Promise<Map<string, number>> {
+  const API = `https://${lang}.wikipedia.org/w/api.php`;
   const map = new Map<string, number>();
   try {
     for (let i = 0; i < titles.length; i += 50) {
@@ -16,7 +19,9 @@ export async function liveRevisionIds(titles: string[]): Promise<Map<string, num
         titles: batch.join("|"),
       });
       const res = await fetch(`${API}?${params}`, { headers: { "user-agent": UA } });
-      if (!res.ok) return new Map();
+      // Return whatever earlier batches gathered rather than discarding it; a
+      // first-batch failure still yields an empty map.
+      if (!res.ok) return map;
       const body = (await res.json()) as {
         query?: {
           normalized?: Array<{ from: string; to: string }>;

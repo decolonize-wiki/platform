@@ -6,6 +6,8 @@ import { AnalysisView } from "../../../components/AnalysisView";
 
 type Params = { lang: string; slug: string };
 
+export const dynamicParams = false;
+
 export async function generateStaticParams(): Promise<Params[]> {
   const all = await getAllAnalyses();
   const seen = new Set<string>();

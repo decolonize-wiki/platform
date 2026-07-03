@@ -8,6 +8,23 @@ const BLACK = "#0d0d0d";
 const PAPER = "#f4f2ec";
 const HOT = "#ff3b1f";
 
+// Prerender one card per flag at build time so this GET handler never reads the
+// data repo at request time on Vercel, where env-driven fs reads aren't
+// file-traced into the function bundle.
+export const dynamic = "force-static";
+
+export async function generateStaticParams(): Promise<Params[]> {
+  const all = await getAllAnalyses();
+  return all.flatMap((a) =>
+    a.flags.map((f) => ({
+      lang: a.language,
+      slug: a.article.slug,
+      seq: String(a.sequence),
+      flagId: f.id,
+    })),
+  );
+}
+
 export async function GET(
   _req: Request,
   { params }: { params: Promise<Params> },

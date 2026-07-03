@@ -87,7 +87,7 @@ export default async function Page({ params }: { params: Promise<Params> }) {
       <div className="stats">
         <div>
           <div className="n">{latest.length}</div>
-          <div className="l">Analyses published</div>
+          <div className="l">Articles analyzed</div>
         </div>
         <div>
           <div className="n">{flagsTotal}</div>

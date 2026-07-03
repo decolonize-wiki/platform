@@ -15,7 +15,14 @@ export function getAllAnalyses(): Promise<Analysis[]> {
 
 export function getLiveRevisionIds(): Promise<Map<string, number>> {
   livePromise ??= getAllAnalyses().then((all) =>
-    liveRevisionIds([...new Set(all.map((a) => a.article.title))]),
+    // Freshness is English-only until multi-language ships: liveRevisionIds hits
+    // one Wikipedia host, so titles from other languages would resolve against
+    // the wrong wiki. Restrict to en analyses rather than silently mis-mapping.
+    liveRevisionIds([
+      ...new Set(
+        all.filter((a) => a.language === "en").map((a) => a.article.title),
+      ),
+    ]),
   );
   return livePromise;
 }
