@@ -209,32 +209,34 @@ export function Atlas({ entries }: { entries: AtlasEntry[] }) {
     [entriesAt],
   );
 
-  // A tap fires synthetic mouse events too; this flag lets onClick know the
-  // interaction was touch so it reveals the box instead of navigating away.
-  const touched = useRef(false);
+  // Where the current gesture started, so a press that drifts past the
+  // threshold reads as a scroll rather than a tap.
+  const down = useRef<{ x: number; y: number } | null>(null);
+  const TAP_SLOP = 10;
 
-  const onMove = (ev: React.MouseEvent<HTMLDivElement>) => {
-    if (touched.current) return; // let touch handlers own the interaction
+  const onPointerMove = (ev: React.PointerEvent<HTMLDivElement>) => {
+    if (ev.pointerType !== "mouse") return; // touch reveals on lift, not on drag
     // Keep the current box open while the pointer is over it (its rows are links).
     if ((ev.target as HTMLElement).closest(".atlas-info")) return;
     showAt(ev.clientX, ev.clientY);
   };
 
-  const onTouchEnd = (ev: React.TouchEvent<HTMLDivElement>) => {
-    if ((ev.target as HTMLElement).closest(".atlas-info")) return; // links handle it
-    touched.current = true;
-    const t = ev.changedTouches[0];
-    if (t) showAt(t.clientX, t.clientY); // first tap: reveal, don't navigate
+  const onPointerDown = (ev: React.PointerEvent<HTMLDivElement>) => {
+    down.current = { x: ev.clientX, y: ev.clientY };
   };
 
-  const onClick = (ev: React.MouseEvent<HTMLDivElement>) => {
+  const onPointerUp = (ev: React.PointerEvent<HTMLDivElement>) => {
+    const start = down.current;
+    down.current = null;
     if ((ev.target as HTMLElement).closest(".atlas-info")) return; // links handle it
-    if (touched.current) {
-      touched.current = false;
-      return; // touch reveals the box; the row links navigate
+    // A press that moved too far was a scroll/drag, not a tap.
+    if (start && Math.hypot(ev.clientX - start.x, ev.clientY - start.y) > TAP_SLOP) return;
+    if (ev.pointerType === "mouse") {
+      const found = entriesAt(ev.clientX, ev.clientY);
+      if (found.length) router.push(`/${found[0].lang}/${found[0].slug}`);
+    } else {
+      showAt(ev.clientX, ev.clientY); // tap reveals the box; the row links navigate
     }
-    const found = entriesAt(ev.clientX, ev.clientY);
-    if (found.length) router.push(`/${found[0].lang}/${found[0].slug}`);
   };
 
   return (
@@ -254,14 +256,15 @@ export function Atlas({ entries }: { entries: AtlasEntry[] }) {
       <div
         ref={boxRef}
         className="atlas-map"
-        onMouseMove={onMove}
-        onMouseLeave={() => {
-          if (touched.current) return;
+        onPointerMove={onPointerMove}
+        onPointerLeave={(ev) => {
+          if (ev.pointerType !== "mouse") return; // don't close a box a tap just opened
           setActive([]);
           setPointer(null);
         }}
-        onTouchEnd={onTouchEnd}
-        onClick={onClick}
+        onPointerDown={onPointerDown}
+        onPointerUp={onPointerUp}
+        onPointerCancel={() => (down.current = null)}
         style={{ cursor: active.length ? "pointer" : "default" }}
       >
         <canvas ref={canvasRef} className="atlas-canvas" aria-hidden="true" />
