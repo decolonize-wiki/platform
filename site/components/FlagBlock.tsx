@@ -1,16 +1,11 @@
 import type { Analysis } from "@schema/analysis";
 import { Strike } from "./Strike";
+import { ShareFlag } from "./ShareFlag";
+import { CATEGORY_NAMES } from "../lib/categories";
+
+export { CATEGORY_NAMES };
 
 type Flag = Analysis["flags"][number];
-
-export const CATEGORY_NAMES: Record<Flag["categoryId"], string> = {
-  "discovery-framing": "Discovery framing",
-  "agentless-passive": "Agentless passive",
-  euphemism: "Euphemism",
-  "one-sided-sourcing": "One-sided sourcing",
-  "pre-contact-erasure": "Pre-contact erasure",
-  "toponymic-colonialism": "Toponymic colonialism",
-};
 
 function wordCount(s: string): number {
   return s.trim().split(/\s+/).length;
@@ -49,7 +44,19 @@ function QuoteBody({ flag }: { flag: Flag }) {
   return wordCount(flag.quote) <= 6 ? <Strike term={flag.quote} /> : <>{flag.quote}</>;
 }
 
-export function FlagBlock({ flag, index }: { flag: Flag; index: number }) {
+export function FlagBlock({
+  flag,
+  index,
+  lang,
+  slug,
+  seq,
+}: {
+  flag: Flag;
+  index: number;
+  lang: string;
+  slug: string;
+  seq: string;
+}) {
   const disputeUrl = `https://github.com/decolonize-wiki/methodology/issues/new?title=${encodeURIComponent(`Dispute: ${flag.id}`)}&labels=dispute`;
   const beforeGap = junction(flag.anchorBefore, flag.quote);
   const afterGap = junction(flag.quote, flag.anchorAfter);
@@ -83,6 +90,7 @@ export function FlagBlock({ flag, index }: { flag: Flag; index: number }) {
       </div>
       <div className="flagline">
         <a href={disputeUrl}>dispute this flag</a>
+        <ShareFlag lang={lang} slug={slug} seq={seq} flagId={flag.id} articleSlug={slug} />
       </div>
     </article>
   );

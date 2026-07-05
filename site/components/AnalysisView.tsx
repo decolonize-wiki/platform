@@ -91,7 +91,14 @@ export function AnalysisView({
         ) : null}
 
         {analysis.flags.map((flag, i) => (
-          <FlagBlock key={flag.id} flag={flag} index={i} />
+          <FlagBlock
+            key={flag.id}
+            flag={flag}
+            index={i}
+            lang={analysis.language}
+            slug={article.slug}
+            seq={String(analysis.sequence)}
+          />
         ))}
 
         {analysis.namingNote ? (

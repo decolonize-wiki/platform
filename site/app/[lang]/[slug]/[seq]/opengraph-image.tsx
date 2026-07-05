@@ -1,6 +1,8 @@
 import { ImageResponse } from "next/og";
 import { notFound } from "next/navigation";
 import { getAllAnalyses } from "../../../../lib/cached";
+import { findAnalysis } from "../../../../lib/card-data";
+import { buildAttribution } from "../../../../lib/card-attribution";
 import { CATEGORY_NAMES } from "../../../../components/FlagBlock";
 import type { Analysis } from "@schema/analysis";
 
@@ -20,26 +22,23 @@ const BLACK = "#0d0d0d";
 const PAPER = "#f4f2ec";
 const HOT = "#ff3b1f";
 
-async function find(params: Params) {
-  const all = await getAllAnalyses();
-  return all.find(
-    (a) =>
-      a.language === params.lang &&
-      a.article.slug === params.slug &&
-      String(a.sequence) === params.seq,
-  );
-}
-
 export default async function Image({ params }: { params: Promise<Params> }) {
   const p = await params;
-  const analysis = await find(p);
+  const all = await getAllAnalyses();
+  const analysis = findAnalysis(all, p);
   if (!analysis) notFound();
   const flagCount = analysis.flags.length;
   const title = analysis.article.title;
   const categories = [
     ...new Set(analysis.flags.map((f) => f.categoryId)),
   ] as CategoryId[];
-  const attribution = `${title} · text: Wikipedia, CC BY-SA · decolonize.wiki/${p.lang}/${p.slug}/${p.seq}?utm_source=card&utm_medium=og`;
+  const attribution = buildAttribution({
+    title,
+    lang: p.lang,
+    slug: p.slug,
+    seq: p.seq,
+    medium: "og",
+  });
 
   return new ImageResponse(
     (

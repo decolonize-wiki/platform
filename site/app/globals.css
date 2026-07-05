@@ -53,6 +53,8 @@ a{color:inherit;}
 .fix{display:inline-block;background:var(--hot);color:var(--black);font-family:'Arial Narrow',Haettenschweiler,Impact,sans-serif;font-weight:700;text-transform:uppercase;font-size:.8em;padding:.05em .3em;transform:rotate(-1.5deg);letter-spacing:-.01em;line-height:1.2;}
 .flagline{margin-top:16px;display:flex;flex-wrap:wrap;gap:8px 26px;align-items:baseline;font-family:ui-monospace,'Courier New',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--pgrey);max-width:56ch;}
 .flagline a{color:var(--pgrey);text-decoration:underline;text-underline-offset:3px;}
+.share{display:flex;flex-wrap:wrap;gap:8px 20px;align-items:baseline;}
+.share button{background:none;border:none;padding:0;margin:0;font:inherit;letter-spacing:inherit;text-transform:inherit;color:var(--pgrey);text-decoration:underline;text-underline-offset:3px;cursor:pointer;}
 .why{max-width:60ch;font-family:Georgia,'Iowan Old Style',serif;font-size:15.5px;line-height:1.7;color:var(--pink);margin:18px 0 0;}
 .rw{max-width:56ch;margin:20px 0 0;padding:16px 18px;border:1px solid #d8d2c2;background:#ffffff;font-family:Georgia,'Iowan Old Style',serif;font-size:16px;line-height:1.65;}
 .rw b{font-family:ui-monospace,'Courier New',monospace;font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--hot);display:block;margin-bottom:8px;font-weight:700;}
@@ -171,6 +173,8 @@ a{color:inherit;}
   .atlas-info{max-width:min(280px,calc(100vw - 48px));}
   /* Expand the footer link's tap area without shifting the row. */
   .mfoot .repo-link{display:inline-block;padding:12px 6px;margin:-12px -6px;}
+  /* Same trick for the per-flag dispute/share links — small mono text, bigger taps. */
+  .flagline a,.share a,.share button{display:inline-block;padding:10px 4px;margin:-10px -4px;}
 }
 
 /* Sources table stacks — the two fixed columns overflow narrow viewports. */

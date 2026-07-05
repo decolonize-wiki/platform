@@ -1,7 +1,7 @@
 import { ImageResponse } from "next/og";
-import { getAllAnalyses } from "../../../../../../lib/cached";
-import { findAnalysis, findFlag, flagCardParams } from "../../../../../../lib/card-data";
-import { renderFlagCard, CARD_FORMATS } from "../../../../../../lib/card-render";
+import { getAllAnalyses } from "../../../../../../../lib/cached";
+import { findAnalysis, findFlag, flagCardParams } from "../../../../../../../lib/card-data";
+import { renderFlagCard, CARD_FORMATS } from "../../../../../../../lib/card-render";
 
 type Params = { lang: string; slug: string; seq: string; flagId: string };
 
@@ -28,7 +28,7 @@ export async function GET(
   }
 
   const index = analysis.flags.indexOf(flag);
-  const format = CARD_FORMATS.post;
+  const format = CARD_FORMATS.story;
 
   return new ImageResponse(
     renderFlagCard({
