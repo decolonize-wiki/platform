@@ -50,12 +50,15 @@ export function FlagBlock({
   lang,
   slug,
   seq,
+  liveChanged,
 }: {
   flag: Flag;
   index: number;
   lang: string;
   slug: string;
   seq: string;
+  /** True when this flag's quote no longer appears in the live article. */
+  liveChanged?: boolean;
 }) {
   const disputeUrl = `https://github.com/decolonize-wiki/methodology/issues/new?title=${encodeURIComponent(`Dispute: ${flag.id}`)}&labels=dispute`;
   const beforeGap = junction(flag.anchorBefore, flag.quote);
@@ -89,6 +92,11 @@ export function FlagBlock({
         <span>{flag.rewrite}</span>
       </div>
       <div className="flagline">
+        {liveChanged ? (
+          <span className="livenote">
+            Passage changed in the live article — may have been addressed
+          </span>
+        ) : null}
         <a href={disputeUrl}>dispute this flag</a>
         <ShareFlag lang={lang} slug={slug} seq={seq} flagId={flag.id} articleSlug={slug} />
       </div>

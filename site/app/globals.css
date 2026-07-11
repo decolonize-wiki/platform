@@ -53,6 +53,7 @@ a{color:inherit;}
 .fix{display:inline-block;background:var(--hot);color:var(--black);font-family:'Arial Narrow',Haettenschweiler,Impact,sans-serif;font-weight:700;text-transform:uppercase;font-size:.8em;padding:.05em .3em;transform:rotate(-1.5deg);letter-spacing:-.01em;line-height:1.2;}
 .flagline{margin-top:16px;display:flex;flex-wrap:wrap;gap:8px 26px;align-items:baseline;font-family:ui-monospace,'Courier New',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--pgrey);max-width:56ch;}
 .flagline a{color:var(--pgrey);text-decoration:underline;text-underline-offset:3px;}
+.livenote{color:var(--pink);}
 .share{display:flex;flex-wrap:wrap;gap:8px 20px;align-items:baseline;}
 .share button{background:none;border:none;padding:0;margin:0;font:inherit;letter-spacing:inherit;text-transform:inherit;color:var(--pgrey);text-decoration:underline;text-underline-offset:3px;cursor:pointer;}
 .why{max-width:60ch;font-family:Georgia,'Iowan Old Style',serif;font-size:15.5px;line-height:1.7;color:var(--pink);margin:18px 0 0;}

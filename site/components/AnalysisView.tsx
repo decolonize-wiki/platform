@@ -7,14 +7,18 @@ import { RepoLink } from "./RepoLink";
 export function AnalysisView({
   analysis,
   liveRevisionId,
+  missingFlagIds,
   latestSeq,
 }: {
   analysis: Analysis;
   liveRevisionId?: number;
+  /** Flag ids whose quote no longer appears in the live article; undefined = not checked. */
+  missingFlagIds?: string[];
   latestSeq: number;
 }) {
   const { article, summary } = analysis;
   const total = analysis.flags.length;
+  const missing = new Set(missingFlagIds ?? []);
   const counts = Object.entries(summary.flagCounts) as Array<
     [keyof typeof CATEGORY_NAMES, number]
   >;
@@ -98,6 +102,7 @@ export function AnalysisView({
             lang={analysis.language}
             slug={article.slug}
             seq={String(analysis.sequence)}
+            liveChanged={missing.has(flag.id)}
           />
         ))}
 
@@ -125,7 +130,11 @@ export function AnalysisView({
         </section>
       ) : null}
 
-      <Receipt analysis={analysis} liveRevisionId={liveRevisionId} />
+      <Receipt
+        analysis={analysis}
+        liveRevisionId={liveRevisionId}
+        missingFlagIds={missingFlagIds}
+      />
       </main>
 
       <footer className="mfoot">

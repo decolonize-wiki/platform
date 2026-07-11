@@ -1,7 +1,12 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getAllAnalyses, getLiveRevisionIds } from "../../../../lib/cached";
+import {
+  getAllAnalyses,
+  getLiveQuoteChecks,
+  getLiveRevisionIds,
+} from "../../../../lib/cached";
 import { latestFor } from "../../../../lib/data";
+import { analysisKey } from "../../../../lib/live-quotes";
 import { AnalysisView } from "../../../../components/AnalysisView";
 import { JsonLd } from "../../../../components/JsonLd";
 import { analysisJsonLd } from "../../../../lib/structured-data";
@@ -64,6 +69,7 @@ export default async function Page({ params }: { params: Promise<Params> }) {
   const latest = latestFor(all, p.lang, p.slug);
   const latestSeq = latest?.sequence ?? analysis.sequence;
   const live = await getLiveRevisionIds();
+  const checks = await getLiveQuoteChecks();
   const isLatest = latest?.sequence === analysis.sequence;
   const pageUrl = isLatest
     ? `${SITE}/${p.lang}/${p.slug}`
@@ -77,6 +83,7 @@ export default async function Page({ params }: { params: Promise<Params> }) {
       <AnalysisView
         analysis={analysis}
         liveRevisionId={live.get(analysis.article.title)}
+        missingFlagIds={checks.get(analysisKey(analysis))}
         latestSeq={latestSeq}
       />
     </>
