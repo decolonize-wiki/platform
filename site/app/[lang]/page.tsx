@@ -86,7 +86,7 @@ export default async function Page({ params }: { params: Promise<Params> }) {
       <main id="main">
       <section className="hero">
         <h1 className="disp">
-          {"Disco­vered"}
+          {"Discovered"}
           <span className="q">?</span>
         </h1>
         <p>
