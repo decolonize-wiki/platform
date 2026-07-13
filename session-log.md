@@ -1,3 +1,31 @@
+## 2026-07-13 · Methodology v0.2 PRs and signature-hero concept chosen
+
+Resumed the paused research session and moved it into decisions + drafting.
+
+Methodology (../decolonize-methodology, two PRs open, awaiting owner merge):
+- PR #2 promote-delegitimizing-labels: added the 7th category
+  categories/delegitimizing-labels.md (added: v0.2), cleared its CANDIDATES.md
+  row, recorded the ruling in DECISIONS.md. Grounded in guha-1983 + mudimbe-1988.
+  Closes issue #1.
+- PR #3 add-ethnographic-present: added categories/ethnographic-present.md
+  (added: v0.2) plus fabian-1983 and modest-lelijveld-2018 to SOURCES.md.
+- Disjoint files, merge in any order, both fold into v0.2. Owner action:
+  merge both + git tag v0.2 (the PRs do not tag).
+
+Signature hero (this repo, branch feat/signature-hero, local commit only):
+- Brainstormed (superpowers:brainstorming) then built THREE live interactive
+  hero drafts behind a switcher on an unlisted noindex /lab route: 01 Redaction
+  Wall (Three.js corridor of real colonial quotes struck in glowing red), 02
+  Ink Bleed (SVG wet-ink editorial rewrite), 03 Atlas globe (Three.js).
+- Owner chose Concept 01 as the direction. Verified all three visually on
+  localhost via Playwright.
+- Added three + troika-three-text (+ @types/three) to site/package.json.
+- Draft only: hardcoded lab-flags, troika default font, whole-page cohesion +
+  pixel polish still pending. Committed to the branch, not pushed, not merged.
+
+Wrote a comprehensive implementation plan + the still-open art-direction (A/B/C)
+decision into session-progress.md for tomorrow.
+
 ## 2026-07-05 · share-card generation UI (post/story/square, term strikes, share links) + growth brainstorm parked
 
 - Share-card feature built via full agent pipeline (investigate -> plan -> code -> review):
