@@ -13,11 +13,14 @@
     "react": "^19",
     "react-dom": "^19",
     "resend": "^6.17.0",
+    "three": "^0.185.1",
+    "troika-three-text": "^0.52.4",
     "zod": "^4"
   },
   "devDependencies": {
     "@types/node": "^26.1.0",
     "@types/react": "^19",
+    "@types/three": "^0.185.1",
     "typescript": "^6"
   }
 }
