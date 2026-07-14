@@ -4,10 +4,11 @@ import { getAllAnalyses } from "../../lib/cached";
 import { latestFor } from "../../lib/data";
 import { CATEGORY_NAMES } from "../../components/FlagBlock";
 import { Library } from "../../components/Library";
-import { Atlas } from "../../components/Atlas";
+import { HomeHero } from "../../components/hero/HomeHero";
 import { SLUG_REGION } from "../../lib/atlas-regions";
 import { EmailForm } from "../../components/EmailForm";
 import { RepoLink } from "../../components/RepoLink";
+import { heroFlags } from "../../lib/hero-flags";
 import type { Analysis } from "@schema/analysis";
 
 const REQUEST_URL =
@@ -73,6 +74,8 @@ export default async function Page({ params }: { params: Promise<Params> }) {
       region: SLUG_REGION[a.article.slug] ?? "",
     }))
     .filter((e) => e.region !== "");
+
+  const flags = heroFlags(all);
 
   return (
     <>
@@ -143,7 +146,7 @@ export default async function Page({ params }: { params: Promise<Params> }) {
           <span>Maps articles, not borders</span>
         </div>
         <h2 className="disp">The record, mapped.</h2>
-        <Atlas entries={atlasEntries} />
+        <HomeHero flags={flags} atlasEntries={atlasEntries} />
       </section>
 
       <section className="signup" id="signup">
