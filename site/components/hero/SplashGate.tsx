@@ -9,7 +9,11 @@ export function SplashGate({ flags, onEntered }: { flags: HeroFlag[]; onEntered:
   // Default-hidden; reveal only for first-time, capable visitors (post-hydration).
   const [show, setShow] = useState(false);
   useEffect(() => {
-    if (!hasSeenSplash() && !prefersReducedMotion() && hasWebGL() && flags.length) {
+    // `?splash` on the URL forces the splash regardless of the show-once flag —
+    // a dev aid for iterating on the hero without clearing localStorage each time.
+    // Production stays first-visit-only for anyone who doesn't add the param.
+    const forced = new URLSearchParams(location.search).has("splash");
+    if ((forced || !hasSeenSplash()) && !prefersReducedMotion() && hasWebGL() && flags.length) {
       setShow(true);
     } else {
       onEntered(); // no splash → mount content immediately
