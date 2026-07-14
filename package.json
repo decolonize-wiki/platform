@@ -2,7 +2,9 @@
   "name": "decolonize-platform",
   "private": true,
   "type": "module",
-  "workspaces": ["site"],
+  "workspaces": [
+    "site"
+  ],
   "scripts": {
     "test": "vitest run",
     "build": "npm run build -w site",
@@ -11,6 +13,7 @@
   },
   "devDependencies": {
     "@types/node": "^26.1.0",
+    "@vitejs/plugin-react": "^6.0.3",
     "tsx": "^4.22.5",
     "typescript": "^6.0.3",
     "vitest": "^4.1.9",
