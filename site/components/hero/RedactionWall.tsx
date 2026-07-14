@@ -12,11 +12,9 @@ import type { HeroFlag } from "../../lib/hero-flags";
 const HOT = 0xff3b1f;
 const SOFT = 0xcfcbc2;
 
-// Selective bloom: strikes live on their own layer so a dedicated pass can
-// glow only the red ink while the type stays crisp (a luminance threshold
-// can't — the red is darker than the soft text).
-const BLOOM_LAYER = 1;
-
+// Callers MUST pass a stable `flags` array and a stable (memoized) `onReady`.
+// The effect below depends on both; a freshly-built array or an inline callback
+// would tear down and rebuild the entire WebGL scene on every parent render.
 export function RedactionWall({
   flags,
   onReady,
@@ -81,6 +79,18 @@ export function RedactionWall({
         import("three/examples/jsm/postprocessing/EffectComposer.js").EffectComposer;
       let bloomComposer: Composer | null = null;
       let finalComposer: Composer | null = null;
+      // EffectComposer.dispose() does NOT dispose its passes, so these are
+      // hoisted for explicit disposal in cleanup (they own render targets /
+      // materials that leak on every mount/unmount otherwise).
+      let bloomPass:
+        | import("three/examples/jsm/postprocessing/UnrealBloomPass.js").UnrealBloomPass
+        | null = null;
+      let mixPass:
+        | import("three/examples/jsm/postprocessing/ShaderPass.js").ShaderPass
+        | null = null;
+      let outputPass:
+        | import("three/examples/jsm/postprocessing/OutputPass.js").OutputPass
+        | null = null;
       let darkMat: import("three").MeshBasicMaterial | null = null;
       // Non-strike meshes darkened to black during the bloom pass so only the
       // red strikes contribute to the glow.
@@ -108,7 +118,7 @@ export function RedactionWall({
           darkMat = new THREE.MeshBasicMaterial({ color: 0x000000 });
 
           const renderScene = new RenderPass(scene, camera);
-          const bloomPass = new UnrealBloomPass(
+          bloomPass = new UnrealBloomPass(
             new THREE.Vector2(mount.clientWidth, mount.clientHeight),
             0.9, // strength
             0.5, // radius
@@ -119,7 +129,7 @@ export function RedactionWall({
           bloomComposer.addPass(renderScene);
           bloomComposer.addPass(bloomPass);
 
-          const mixPass = new ShaderPass(
+          mixPass = new ShaderPass(
             new THREE.ShaderMaterial({
               uniforms: {
                 baseTexture: { value: null },
@@ -137,13 +147,17 @@ export function RedactionWall({
           finalComposer = new EffectComposer(renderer);
           finalComposer.addPass(renderScene);
           finalComposer.addPass(mixPass);
-          finalComposer.addPass(new OutputPass());
+          outputPass = new OutputPass();
+          finalComposer.addPass(outputPass);
 
           bloomComposer.setSize(mount.clientWidth, mount.clientHeight);
           finalComposer.setSize(mount.clientWidth, mount.clientHeight);
         } catch {
           bloomComposer = null;
           finalComposer = null;
+          bloomPass = null;
+          mixPass = null;
+          outputPass = null;
           darkMat = null;
         }
       }
@@ -171,11 +185,18 @@ export function RedactionWall({
       let ready = false;
       let fontSynced = false;
       let framesRendered = false;
-      const maybeReady = () => {
-        if (ready || !fontSynced || !framesRendered) return;
+      const maybeReady = (force = false) => {
+        if (ready) return;
+        if (!force && (!fontSynced || !framesRendered)) return;
         ready = true;
         onReady?.();
       };
+      // troika's font loader does NOT invoke its sync callback on a font load
+      // error (it only console.errors), and we set no fallback font — so if
+      // /fonts/anton.ttf 404s, fontSynced stays false and onReady would never
+      // fire, hanging the splash loader. Force the ready path after 4s. The
+      // single-fire guard in maybeReady keeps this to exactly one onReady call.
+      const readyTimeout = setTimeout(() => maybeReady(true), 4000);
 
       const setText = (line: Line, onSynced?: () => void) => {
         const flag = LAB_FLAGS[flagCursor % LAB_FLAGS.length];
@@ -220,7 +241,6 @@ export function RedactionWall({
         );
         strike.position.z = 0.06;
         strike.scale.x = 0.0001;
-        strike.layers.enable(BLOOM_LAYER);
         group.add(strike);
 
         const line: Line = {
@@ -357,6 +377,7 @@ export function RedactionWall({
       const prevCleanup = cleanup;
       cleanup = () => {
         prevCleanup();
+        clearTimeout(readyTimeout);
         removeEventListener("pointermove", onMove);
         removeEventListener("resize", onResize);
         lines.forEach((l) => {
@@ -365,6 +386,11 @@ export function RedactionWall({
         });
         strikeGeo.dispose();
         darkMat?.dispose();
+        // EffectComposer.dispose() leaves its passes' render targets/materials
+        // undisposed, so dispose the passes explicitly.
+        bloomPass?.dispose();
+        mixPass?.dispose();
+        outputPass?.dispose();
         bloomComposer?.dispose();
         finalComposer?.dispose();
         renderer.dispose();
