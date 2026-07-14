@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { RedactionWall } from "./RedactionWall";
 import type { HeroFlag } from "../../lib/hero-flags";
 
@@ -17,6 +17,7 @@ export function RedactionSplash({ flags, onDismiss }: { flags: HeroFlag[]; onDis
   const dismissed = useRef(false);
   const enterRef = useRef<HTMLButtonElement>(null);
   const featured = flags[idx % Math.max(1, flags.length)];
+  const handleReady = useCallback(() => setReady(true), []);
 
   useEffect(() => {
     const dismiss = () => {
@@ -59,7 +60,7 @@ export function RedactionSplash({ flags, onDismiss }: { flags: HeroFlag[]; onDis
 
   return (
     <div className={`splash${leaving ? " leaving" : ""}`} role="dialog" aria-modal="true" aria-label="Intro">
-      <div className="splash-bg"><RedactionWall flags={flags} onReady={() => setReady(true)} /></div>
+      <div className="splash-bg"><RedactionWall flags={flags} onReady={handleReady} /></div>
       <div className="splash-vignette" aria-hidden="true" />
       {!ready && (
         <div className="splash-loader" aria-hidden="true">
