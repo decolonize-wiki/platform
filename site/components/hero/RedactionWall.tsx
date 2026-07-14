@@ -113,7 +113,13 @@ export function RedactionWall({
           const { ShaderPass } = await import(
             "three/addons/postprocessing/ShaderPass.js"
           );
-          if (disposed) return;
+          if (disposed) {
+            // The renderer + canvas exist by this point but `cleanup` is
+            // still the initial no-op — dispose them here or they leak.
+            renderer.dispose();
+            renderer.domElement.remove();
+            return;
+          }
 
           darkMat = new THREE.MeshBasicMaterial({ color: 0x000000 });
 
@@ -153,6 +159,15 @@ export function RedactionWall({
           bloomComposer.setSize(mount.clientWidth, mount.clientHeight);
           finalComposer.setSize(mount.clientWidth, mount.clientHeight);
         } catch {
+          // A pass/composer constructed before the throw already allocated
+          // GPU render targets/materials — dispose whatever exists before
+          // nulling, or it leaks silently.
+          bloomPass?.dispose();
+          mixPass?.dispose();
+          outputPass?.dispose();
+          bloomComposer?.dispose();
+          finalComposer?.dispose();
+          darkMat?.dispose();
           bloomComposer = null;
           finalComposer = null;
           bloomPass = null;
