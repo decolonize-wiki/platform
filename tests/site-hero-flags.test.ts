@@ -2,7 +2,7 @@ import { describe, it, expect } from "vitest";
 import { heroFlags } from "../site/lib/hero-flags.js";
 import type { Analysis } from "../src/schema/analysis.js";
 
-const a = (over: Partial<Analysis>): Analysis =>
+const a = (over: Record<string, unknown>): Analysis =>
   ({
     language: "en",
     status: "published",
@@ -12,7 +12,7 @@ const a = (over: Partial<Analysis>): Analysis =>
     article: { title: "Brazil", slug: "brazil" },
     flags: [],
     ...over,
-  }) as Analysis;
+  }) as unknown as Analysis;
 
 const flag = (quote: string, rewrite = "fixed", categoryId = "euphemism") =>
   ({ id: quote, categoryId, quote, rewrite }) as Analysis["flags"][number];
