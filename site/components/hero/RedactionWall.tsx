@@ -126,8 +126,8 @@ export function RedactionWall({
           const renderScene = new RenderPass(scene, camera);
           bloomPass = new UnrealBloomPass(
             new THREE.Vector2(mount.clientWidth, mount.clientHeight),
-            0.9, // strength
-            0.5, // radius
+            0.55, // strength — kept restrained so the red glows with intent and the wall text stays legible backdrop
+            0.35, // radius
             0.0, // threshold 0 — the layer is already isolated by darkening
           );
           bloomComposer = new EffectComposer(renderer);

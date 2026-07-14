@@ -59,7 +59,7 @@ export function RedactionSplash({ flags, onDismiss }: { flags: HeroFlag[]; onDis
   };
 
   return (
-    <div className={`splash${leaving ? " leaving" : ""}`} role="dialog" aria-modal="true" aria-label="Intro">
+    <div className={`splash${leaving ? " leaving" : ""}`} role="presentation">
       <div className="splash-bg"><RedactionWall flags={flags} onReady={handleReady} /></div>
       <div className="splash-vignette" aria-hidden="true" />
       {!ready && (

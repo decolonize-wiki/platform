@@ -200,112 +200,6 @@ a{color:inherit;}
 }
 
 /* ============================================================
-   Concept lab (/lab) — draft signature-hero, not production.
-   ============================================================ */
-.lab-stage{position:fixed;inset:0;background:#0d0d0d;overflow:hidden;}
-.lab-bg{position:absolute;inset:0;z-index:0;}
-.wall-canvas{position:absolute;inset:0;}
-.wall-canvas canvas{display:block;width:100%;height:100%;}
-
-.lab-soon{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;}
-.lab-soon .mono{font-size:11px;color:var(--grey);}
-
-/* Vignette focuses the eye on the reading plane and lets the type sit on top. */
-.lab-vignette{position:absolute;inset:0;z-index:1;pointer-events:none;
-  background:
-    radial-gradient(120% 90% at 50% 42%, transparent 44%, rgba(13,13,13,.72) 100%),
-    linear-gradient(to top, rgba(13,13,13,.92) 0%, transparent 46%);}
-
-.lab-mast{position:absolute;top:0;left:0;right:0;z-index:3;display:flex;
-  justify-content:space-between;align-items:center;gap:14px;
-  padding:18px clamp(18px,4vw,44px);pointer-events:none;
-  mix-blend-mode:difference;}
-.lab-mast .disp{font-size:15px;letter-spacing:.06em;color:var(--paper);}
-.lab-mast .mono{font-size:10px;color:var(--grey);}
-
-.lab-overlay{position:absolute;left:0;bottom:0;z-index:2;
-  padding:0 clamp(18px,4vw,56px) clamp(30px,6vh,64px);
-  max-width:min(92vw,900px);pointer-events:none;}
-.lab-overlay>*{pointer-events:auto;}
-.lab-eyebrow{font-size:10.5px;color:var(--grey);margin-bottom:14px;}
-.lab-h1{font-size:clamp(72px,16vw,220px);line-height:.86;margin:0;color:var(--paper);
-  text-shadow:0 2px 40px rgba(13,13,13,.6);}
-.lab-q{color:var(--hot);}
-.lab-lede{font-size:clamp(15px,1.9vw,19px);line-height:1.5;max-width:46ch;
-  margin:22px 0 26px;color:var(--soft);text-shadow:0 1px 20px rgba(13,13,13,.9);}
-.lab-lede b{color:var(--paper);}
-.lab-cta{background:rgba(13,13,13,.35);backdrop-filter:blur(2px);}
-
-.lab-switch{position:absolute;right:clamp(14px,3vw,32px);bottom:clamp(20px,4vh,40px);
-  z-index:3;display:flex;flex-direction:column;gap:1px;align-items:flex-end;}
-.lab-switch button{display:flex;align-items:baseline;gap:10px;cursor:pointer;
-  background:transparent;border:none;padding:7px 2px;color:var(--grey);
-  font-family:ui-monospace,'Courier New',monospace;text-transform:uppercase;
-  letter-spacing:.14em;font-size:10.5px;transition:color .15s ease;}
-.lab-switch button:hover{color:var(--soft);}
-.lab-switch button.on{color:var(--paper);}
-.lab-switch button.on .no{color:var(--hot);}
-.lab-switch .no{font-variant-numeric:tabular-nums;}
-.lab-switch .nm{min-width:8.5em;text-align:right;}
-
-@media(max-width:760px){
-  .lab-switch .nm{display:none;}
-  .lab-switch button{padding:9px 2px;}
-  .lab-lede{max-width:34ch;}
-}
-
-/* --- Concept 02: Ink Bleed (light, editorial) --- */
-.ink-stage{position:absolute;inset:0;background:var(--paper);color:var(--black);
-  display:flex;flex-direction:column;justify-content:center;align-items:center;
-  padding:clamp(60px,10vh,120px) clamp(20px,5vw,64px);overflow:hidden;
-  background-image:radial-gradient(120% 80% at 50% 30%, rgba(60,56,47,.05), transparent 60%);}
-.ink-mast{position:absolute;top:0;left:0;right:0;display:flex;justify-content:space-between;
-  gap:14px;padding:18px clamp(18px,4vw,44px);color:var(--pgrey);font-size:10px;}
-.ink-foot{position:absolute;bottom:clamp(18px,4vh,34px);color:var(--pgrey);font-size:10px;}
-
-.ink-plate{max-width:min(92vw,16ch);text-align:center;}
-.ink-line{position:relative;display:inline-block;
-  font-family:Georgia,'Iowan Old Style','Times New Roman',serif;
-  font-size:clamp(26px,5vw,52px);line-height:1.14;font-weight:500;
-  transition:color .5s ease,opacity .5s ease;}
-.ink-quote{position:relative;z-index:1;}
-.ink-line.phase-rewritten{color:var(--pgrey);opacity:.6;}
-
-/* the wet red ink that bleeds across and redacts the colonial phrase */
-.ink-ink{position:absolute;left:-.12em;top:50%;transform:translateY(-50%);
-  height:.78em;width:0;background:var(--hot);z-index:2;border-radius:2px;
-  transition:width .82s cubic-bezier(.7,0,.3,1),opacity .55s ease;pointer-events:none;}
-.ink-line.phase-bleeding .ink-ink{width:calc(100% + .24em);}
-.ink-line.phase-rewritten .ink-ink{width:calc(100% + .24em);opacity:0;}
-
-.ink-strike{position:absolute;left:0;top:50%;height:3px;width:100%;background:var(--hot);
-  transform:scaleX(0);transform-origin:left center;z-index:3;
-  transition:transform .5s ease .1s;}
-.ink-line.phase-bleeding .ink-strike,.ink-line.phase-rewritten .ink-strike{transform:scaleX(1);}
-
-.ink-correction{margin-top:26px;max-width:34ch;
-  font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-weight:600;
-  font-size:clamp(15px,2.1vw,22px);line-height:1.4;color:var(--black);
-  opacity:0;transform:translateY(8px);transition:opacity .6s ease,transform .6s ease;}
-.ink-correction.phase-rewritten{opacity:1;transform:none;}
-.ink-arrow{color:var(--hot);font-weight:700;}
-
-/* --- Concept 03: Atlas globe (dark) --- */
-.atlas-stage{position:absolute;inset:0;background:#0d0d0d;overflow:hidden;}
-.atlas-canvas{position:absolute;inset:0;}
-.atlas-canvas canvas{display:block;width:100%;height:100%;cursor:grab;}
-.atlas-canvas canvas:active{cursor:grabbing;}
-.atlas-overlay{position:absolute;left:0;bottom:0;z-index:2;pointer-events:none;
-  padding:0 clamp(18px,4vw,56px) clamp(30px,6vh,64px);max-width:min(92vw,720px);}
-.atlas-h1{font-size:clamp(40px,7vw,92px);line-height:.9;margin:0 0 24px;color:var(--paper);}
-.atlas-feature{display:flex;flex-direction:column;gap:6px;border-left:2px solid var(--hot);
-  padding-left:16px;max-width:52ch;}
-.af-title{font-size:10px;letter-spacing:.2em;color:var(--hot);}
-.af-quote{font-family:Georgia,serif;font-size:clamp(16px,2.2vw,23px);color:var(--soft);
-  text-decoration:line-through;text-decoration-color:var(--hot);}
-.af-rewrite{font-size:clamp(13px,1.7vw,16px);color:var(--paper);}
-
-/* ============================================================
    RedactionSplash — production landing overlay (WebGL wall +
    DOM featured quote). Fixed so it causes no CLS; crossfades
    out to reveal the identical static `.hero` beneath it.
@@ -314,6 +208,8 @@ a{color:inherit;}
   opacity:1;transition:opacity .5s ease;}
 .splash.leaving{opacity:0;}
 .splash-bg{position:absolute;inset:0;z-index:0;}
+.wall-canvas{position:absolute;inset:0;}
+.wall-canvas canvas{display:block;width:100%;height:100%;}
 
 /* Focuses the eye on the reading plane and lets the type sit on top. */
 .splash-vignette{position:absolute;inset:0;z-index:1;pointer-events:none;
