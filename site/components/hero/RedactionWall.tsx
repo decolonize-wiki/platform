@@ -91,10 +91,10 @@ export function RedactionWall({
       let outputPass:
         | import("three/examples/jsm/postprocessing/OutputPass.js").OutputPass
         | null = null;
-      let darkMat: import("three").MeshBasicMaterial | null = null;
-      // Non-strike meshes darkened to black during the bloom pass so only the
-      // red strikes contribute to the glow.
-      const darkenables: InstanceType<typeof Text>[] = [];
+      // Quote text meshes hidden during the bloom pass so only the red strikes
+      // contribute to the glow (troika Text ignores a swapped .material, so
+      // .visible is what actually isolates it — see render()).
+      const hiddenDuringBloom: InstanceType<typeof Text>[] = [];
 
       if (!small) {
         try {
@@ -121,14 +121,13 @@ export function RedactionWall({
             return;
           }
 
-          darkMat = new THREE.MeshBasicMaterial({ color: 0x000000 });
 
           const renderScene = new RenderPass(scene, camera);
           bloomPass = new UnrealBloomPass(
             new THREE.Vector2(mount.clientWidth, mount.clientHeight),
-            0.55, // strength — kept restrained so the red glows with intent and the wall text stays legible backdrop
-            0.35, // radius
-            0.0, // threshold 0 — the layer is already isolated by darkening
+            0.7, // strength
+            0.4, // radius
+            0.0, // threshold 0 — isolation is by hiding non-strike meshes, not luminance
           );
           bloomComposer = new EffectComposer(renderer);
           bloomComposer.renderToScreen = false;
@@ -167,13 +166,11 @@ export function RedactionWall({
           outputPass?.dispose();
           bloomComposer?.dispose();
           finalComposer?.dispose();
-          darkMat?.dispose();
           bloomComposer = null;
           finalComposer = null;
           bloomPass = null;
           mixPass = null;
           outputPass = null;
-          darkMat = null;
         }
       }
 
@@ -248,7 +245,7 @@ export function RedactionWall({
         quote.maxWidth = 12;
         quote.textAlign = "center";
         group.add(quote);
-        darkenables.push(quote);
+        hiddenDuringBloom.push(quote);
 
         const strike = new THREE.Mesh(
           strikeGeo,
@@ -324,17 +321,16 @@ export function RedactionWall({
         }
       };
 
-      // Layer-isolated selective bloom render: darken every non-strike mesh to
-      // black, render the strike-only bloom offscreen, restore materials, then
-      // render the full scene and add the bloom texture over it.
+      // Selective bloom render: hide every non-strike mesh, render the
+      // strike-only bloom offscreen, restore visibility, then render the full
+      // scene and add the bloom texture over it. (troika Text ignores a swapped
+      // .material — it manages its own SDF material — so we toggle .visible,
+      // which does work, to keep the wall text crisp and bloom only the strikes.)
       const render = () => {
-        if (bloomComposer && finalComposer && darkMat) {
-          const saved = darkenables.map((q) => q.material);
-          for (const q of darkenables) q.material = darkMat;
+        if (bloomComposer && finalComposer) {
+          for (const q of hiddenDuringBloom) q.visible = false;
           bloomComposer.render();
-          darkenables.forEach((q, i) => {
-            q.material = saved[i];
-          });
+          for (const q of hiddenDuringBloom) q.visible = true;
           finalComposer.render();
         } else {
           renderer.render(scene, camera);
@@ -400,7 +396,6 @@ export function RedactionWall({
           (l.strike.material as import("three").Material).dispose();
         });
         strikeGeo.dispose();
-        darkMat?.dispose();
         // EffectComposer.dispose() leaves its passes' render targets/materials
         // undisposed, so dispose the passes explicitly.
         bloomPass?.dispose();
