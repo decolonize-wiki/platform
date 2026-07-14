@@ -304,3 +304,55 @@ a{color:inherit;}
 .af-quote{font-family:Georgia,serif;font-size:clamp(16px,2.2vw,23px);color:var(--soft);
   text-decoration:line-through;text-decoration-color:var(--hot);}
 .af-rewrite{font-size:clamp(13px,1.7vw,16px);color:var(--paper);}
+
+/* ============================================================
+   RedactionSplash — production landing overlay (WebGL wall +
+   DOM featured quote). Fixed so it causes no CLS; crossfades
+   out to reveal the identical static `.hero` beneath it.
+   ============================================================ */
+.splash{position:fixed;inset:0;z-index:50;background:var(--black);overflow:hidden;
+  opacity:1;transition:opacity .5s ease;}
+.splash.leaving{opacity:0;}
+.splash-bg{position:absolute;inset:0;z-index:0;}
+
+/* Focuses the eye on the reading plane and lets the type sit on top. */
+.splash-vignette{position:absolute;inset:0;z-index:1;pointer-events:none;
+  background:
+    radial-gradient(120% 90% at 50% 42%, transparent 44%, rgba(13,13,13,.72) 100%),
+    linear-gradient(to top, rgba(13,13,13,.92) 0%, transparent 46%);}
+
+/* The ONLY thing visible until `ready` — hides the empty/unfont-ed canvas. */
+.splash-loader{position:absolute;inset:0;z-index:4;background:var(--black);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;}
+.splash-loader .mono{font-size:11px;color:var(--soft);}
+.splash-bar{width:180px;height:2px;background:var(--hair);overflow:hidden;border-radius:2px;}
+.splash-bar::after{content:"";display:block;height:100%;width:40%;background:var(--hot);
+  animation:splash-fill 1.7s ease-in-out infinite;}
+@keyframes splash-fill{0%{transform:translateX(-100%);width:40%;}50%{width:70%;}
+  100%{transform:translateX(250%);width:40%;}}
+
+.splash-body{position:absolute;left:0;bottom:0;z-index:3;
+  padding:0 clamp(18px,4vw,44px) clamp(30px,4vw,48px);max-width:min(92vw,900px);}
+.splash-eyebrow{font-size:10.5px;color:var(--grey);margin-bottom:16px;}
+.splash-eyebrow em{color:var(--hot);font-style:normal;}
+
+/* Same face, size band and left offset as the underlying `.hero h1` — when the
+   splash fades the identical headline shows through, reading as continuity. */
+.splash-h1{font-size:clamp(44px,14vw,160px);margin:0;overflow-wrap:normal;color:var(--paper);
+  text-shadow:0 2px 40px rgba(13,13,13,.6);}
+.splash-q{color:var(--hot);}
+
+.splash-featured{margin:22px 0 26px;max-width:52ch;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;
+  font-size:clamp(15px,1.9vw,19px);line-height:1.5;display:flex;flex-direction:column;gap:6px;
+  text-shadow:0 1px 20px rgba(13,13,13,.9);}
+.sf-strike{color:var(--soft);text-decoration:line-through;text-decoration-color:var(--hot);}
+.sf-rewrite{color:var(--paper);font-weight:600;}
+
+.splash-enter{opacity:0;transition:opacity .4s ease;}
+.splash-enter.on{opacity:1;}
+
+@media(prefers-reduced-motion:reduce){
+  .splash{transition:none;}
+  .splash-bar::after{animation:none;transform:none;width:100%;}
+  .splash-enter{transition:none;}
+}
