@@ -1,4 +1,9 @@
 :root{ --black:#0d0d0d; --paper:#f4f2ec; --hot:#ff3b1f; --grey:#8a8a8a; --soft:#cfcbc2; --hair:#2a2a2a; --pgrey:#7a756a; --pink:#3c382f; }
+@font-face{
+  font-family:"Anton";
+  src:url("/fonts/anton.ttf") format("truetype");
+  font-weight:400;font-style:normal;font-display:swap;
+}
 html{color-scheme:dark;-webkit-text-size-adjust:100%;text-size-adjust:100%;}
 /* overflow-x:hidden is a safety net, not a fix — it hides real horizontal
    overflow. Layout reviews should test at 360px with this rule disabled. */
