@@ -35,7 +35,7 @@ export function HeroArtSlider({ lang }: { lang: string }) {
             src={`/art/${e.id}-640.webp`}
             width={d.w}
             height={d.h}
-            alt={i === idx ? e.alt : ""}
+            alt=""
             loading={i === 0 ? "eager" : "lazy"}
             decoding="async"
             className={i === idx ? "on" : undefined}
@@ -43,7 +43,8 @@ export function HeroArtSlider({ lang }: { lang: string }) {
         );
       })}
       <span className="hero-art-caption mono">
-        {creditLine(active)} · View the collection →
+        <span className="hac-credit">{creditLine(active)}</span>
+        <span className="hac-cta">View the collection →</span>
       </span>
     </Link>
   );

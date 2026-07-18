@@ -3,6 +3,7 @@
 import { describe, it, expect } from "vitest";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
+import sharp from "sharp";
 import { ART_COLLECTION } from "../site/lib/art/collection.js";
 import { ART_DIMS } from "../site/lib/art/manifest.js";
 import { WIDTHS, variantFile } from "../scripts/art/art-helpers.js";
@@ -23,6 +24,16 @@ describe("generated art assets", () => {
       for (const w of WIDTHS) {
         const p = join("site", "public", "art", variantFile(e.id, w));
         expect(existsSync(p), `missing ${p}`).toBe(true);
+      }
+    }
+  });
+
+  it("every variant's actual pixel width matches its filename width", async () => {
+    for (const e of ART_COLLECTION) {
+      for (const w of WIDTHS) {
+        const p = join("site", "public", "art", variantFile(e.id, w));
+        const meta = await sharp(p).metadata();
+        expect(meta.width, `${p} width mismatch`).toBe(w);
       }
     }
   });

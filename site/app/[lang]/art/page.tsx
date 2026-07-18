@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ART_COLLECTION, creditLine, objectUrl } from "../../../lib/art/collection";
+import { ART_COLLECTION, objectUrl } from "../../../lib/art/collection";
 import { ArtFigure } from "../../../components/ArtFigure";
 import { RepoLink } from "../../../components/RepoLink";
 
@@ -57,7 +57,7 @@ export default async function Page({ params }: { params: Promise<Params> }) {
                 </p>
                 <p className="art-context">{e.context}</p>
                 <p className="art-record mono">
-                  <a href={objectUrl(e)} rel="noopener">
+                  <a href={objectUrl(e)} target="_blank" rel="noopener">
                     View the record at NMAAHC →
                   </a>
                 </p>

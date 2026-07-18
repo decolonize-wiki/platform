@@ -18,7 +18,7 @@ export const ART_DIMS: Record<string, { w: number; h: number; widths: number[] }
   },
   "mpla-anniversary-1975": {
     "w": 640,
-    "h": 817,
+    "h": 818,
     "widths": [
       640,
       1280
@@ -42,7 +42,7 @@ export const ART_DIMS: Record<string, { w: number; h: number; widths: number[] }
   },
   "naacp-broadside-1922": {
     "w": 640,
-    "h": 887,
+    "h": 886,
     "widths": [
       640,
       1280

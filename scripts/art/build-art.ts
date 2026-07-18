@@ -22,6 +22,11 @@ const OUT = path.resolve("site/public/art");
 const MANIFEST = path.resolve("site/lib/art/manifest.ts");
 const API_KEY = process.env.SI_API_KEY ?? "DEMO_KEY";
 const PAPER = { r: 244, g: 242, b: 236 }; // --paper
+// idsUrl's `max` bounds the LONGEST edge, not the width — for portrait
+// posters that's height, so the master must be fetched well above the
+// largest target width to guarantee true width after resize. Must exceed
+// maxWidth/aspect ≈ 1280/0.64 ≈ 2000 for the narrowest poster in the set.
+const MASTER_MAX = 2400;
 
 async function fetchJson(url: string): Promise<unknown> {
   const r = await fetch(url);
@@ -45,22 +50,31 @@ for (const e of ART_COLLECTION) {
       e.idsId ??
       pickIdsId(await fetchJson(searchUrl(e.objectNumber, API_KEY)), e.objectNumber);
     if (!idsId) throw new Error("no online media found");
-    const master = await fetchBuffer(idsUrl(idsId, 1600));
+    const master = await fetchBuffer(idsUrl(idsId, MASTER_MAX));
+    // Normalise/grayscale once on the master so tone mapping is identical
+    // across width variants — sharp pipelines aren't reusable across
+    // .toBuffer() calls, so materialize this base once and resize from it.
+    const base = await sharp(master).grayscale().normalise().toBuffer();
+    let entryFailed = false;
     for (const w of WIDTHS) {
-      const buf = await sharp(master)
+      const buf = await sharp(base)
         .resize({ width: w, withoutEnlargement: true })
-        .grayscale()
-        .normalise()
         .tint(PAPER) // black→paper duotone ramp, matches the site palette
         .webp({ quality: 78 })
         .toBuffer();
+      const m = await sharp(buf).metadata();
+      if (m.width !== w) {
+        failures++;
+        entryFailed = true;
+        console.error(`FAIL: ${e.id} ${w} produced ${m.width}`);
+        continue;
+      }
       await writeFile(path.join(OUT, variantFile(e.id, w)), buf);
       if (w === WIDTHS[0]) {
-        const m = await sharp(buf).metadata();
         dims[e.id] = { w: m.width ?? 0, h: m.height ?? 0, widths: WIDTHS };
       }
     }
-    console.log(`ok: ${e.id} (${idsId})`);
+    if (!entryFailed) console.log(`ok: ${e.id} (${idsId})`);
   } catch (err) {
     failures++;
     console.error(`FAIL: ${e.id} (${e.objectNumber}) — ${(err as Error).message}`);
