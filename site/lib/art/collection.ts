@@ -12,6 +12,7 @@ export type ArtEntry = {
   alt: string;
   regions: string[];
   themes: string[];
+  idsId?: string; // IDS delivery id, recorded so re-runs don't depend on the rate-limited search API
 };
 
 export const ART_COLLECTION: ArtEntry[] = [
@@ -25,6 +26,7 @@ export const ART_COLLECTION: ArtEntry[] = [
     alt: "Poster for the 1968 Free Huey rally at De Fremery Park in Oakland, demanding the release of Black Panther Party co-founder Huey P. Newton",
     regions: ["north-america"],
     themes: ["black-power", "political-prisoners"],
+    idsId: "NMAAHC-2019_28_20_001",
   },
   {
     id: "honor-king-1968",
@@ -36,6 +38,7 @@ export const ART_COLLECTION: ArtEntry[] = [
     alt: "Placard reading HONOR KING: END RACISM, carried by Arthur J. Schmidt in the 1968 Memphis march for Dr. King, held in support of the sanitation workers' strike",
     regions: ["north-america"],
     themes: ["civil-rights", "labor"],
+    idsId: "NMAAHC-2017_71_5_001",
   },
   {
     id: "mpla-anniversary-1975",
@@ -47,6 +50,7 @@ export const ART_COLLECTION: ArtEntry[] = [
     alt: "Flier commemorating the 19th anniversary of the MPLA, Angola's liberation movement, illustrated with two MPLA members and issued in New York City, December 1975",
     regions: ["africa"],
     themes: ["anti-colonial-liberation", "solidarity"],
+    idsId: "NMAAHC-2015_97_27_62_001",
   },
   {
     id: "young-lords-1971",
@@ -58,6 +62,7 @@ export const ART_COLLECTION: ArtEntry[] = [
     alt: "Young Lords Party poster stacking four illustrated rifles labeled Health, Food, Housing, and Education above the party's insignia, circa 1971",
     regions: ["north-america", "caribbean"],
     themes: ["self-determination", "community-organizing"],
+    idsId: "NMAAHC-2018_35_3_001",
   },
   {
     id: "negro-exposition-1940",
@@ -69,6 +74,7 @@ export const ART_COLLECTION: ArtEntry[] = [
     alt: "Poster for the 1940 American Negro Exposition in Chicago, marking 75 years of Black achievement since emancipation",
     regions: ["north-america"],
     themes: ["black-achievement", "public-memory"],
+    idsId: "NMAAHC-CE95F87171C92_2001",
   },
   {
     id: "naacp-broadside-1922",
@@ -80,6 +86,7 @@ export const ART_COLLECTION: ArtEntry[] = [
     alt: "NAACP anti-lynching broadside headed 'For the Good of America,' documenting 3,436 people lynched in the United States from 1889 to 1922",
     regions: ["north-america"],
     themes: ["anti-lynching", "documentation"],
+    idsId: "NMAAHC-2011_57_9_001",
   },
 ];
 

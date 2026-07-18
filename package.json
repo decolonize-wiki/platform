@@ -9,12 +9,14 @@
     "test": "vitest run",
     "build": "npm run build -w site",
     "fetch-article": "tsx scripts/fetch-article.ts",
-    "verify-analysis": "tsx scripts/verify-analysis.ts"
+    "verify-analysis": "tsx scripts/verify-analysis.ts",
+    "build-art": "tsx scripts/art/build-art.ts"
   },
   "devDependencies": {
     "@types/node": "^26.1.0",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.3",
+    "sharp": "^0.35.3",
     "tsx": "^4.22.5",
     "typescript": "^6.0.3",
     "vitest": "^4.1.9",
