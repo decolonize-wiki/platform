@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { ART_COLLECTION, artById, creditLine } from "../site/lib/art/collection.js";
+import { ART_COLLECTION, artById, creditLine, objectUrl } from "../site/lib/art/collection.js";
 
 describe("ART_COLLECTION", () => {
   it("has six entries with unique ids", () => {
@@ -14,6 +14,7 @@ describe("ART_COLLECTION", () => {
       expect(e.year).toMatch(/^(c\. )?\d{4}$/);
       expect(e.objectNumber).toMatch(/^\d{4}\.\d+/);
       expect(e.alt.length).toBeGreaterThan(20);
+      expect(e.context.length).toBeGreaterThan(80);
       expect(e.regions.length).toBeGreaterThan(0);
       expect(e.themes.length).toBeGreaterThan(0);
       expect(e.source).toBe("NMAAHC");
@@ -31,5 +32,11 @@ describe("ART_COLLECTION", () => {
     expect(line).toContain("1922");
     expect(line).toContain("NMAAHC 2011.57.9");
     expect(line).toContain("CC0");
+  });
+
+  it("objectUrl points at the piece's NMAAHC record", () => {
+    expect(objectUrl(artById("free-huey-1968"))).toBe(
+      "https://nmaahc.si.edu/object/nmaahc_2019.28.20",
+    );
   });
 });
