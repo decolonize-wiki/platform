@@ -22,7 +22,7 @@ describe("ART_COLLECTION", () => {
   });
 
   it("artById returns the entry or throws", () => {
-    expect(artById("vitoria-e-certa-1976").objectNumber).toBe("2015.97.27.39");
+    expect(artById("mpla-anniversary-1975").objectNumber).toBe("2015.97.27.62");
     expect(() => artById("nope")).toThrow(/unknown art id/);
   });
 
