@@ -4,6 +4,7 @@ import Link from "next/link";
 import { getCategories, getSources } from "../../../lib/methodology";
 import { JsonLd } from "../../../components/JsonLd";
 import { RepoLink } from "../../../components/RepoLink";
+import { ArtFigure } from "../../../components/ArtFigure";
 
 type Params = { lang: string };
 
@@ -118,6 +119,13 @@ export default async function Page() {
           Ngũgĩ, Quijano, Trouillot, Bispo, Krenak — <b>53 sources</b>, all
           cited, all versioned, all open to dispute by pull request.
         </p>
+      </section>
+
+      <section className="meth-art" aria-label="From the movement's own press">
+        <ArtFigure
+          id="naacp-broadside-1922"
+          sizes="(max-width:760px) 92vw, min(58vw, 760px)"
+        />
       </section>
 
       <section className="paper">
