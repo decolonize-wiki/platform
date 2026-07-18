@@ -47,8 +47,29 @@ export function RedactionWall({
 
       const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
       const small = matchMedia("(max-width: 760px)").matches;
-      const LINE_COUNT = small ? 8 : 18;
-      const LANES = small ? [-2.4, 0, 2.4] : [-7, -3.5, 0, 3.5, 7];
+      const LINE_COUNT = small ? 10 : 18;
+      // Each line owns one row of a fixed ladder for its whole life — the wall
+      // reads as a page of discrete lines receding, never a pile of collisions.
+      // The *7 interleave keeps z-neighbors from being y-neighbors (7 is
+      // coprime with both line counts).
+      // Lower ceiling on mobile — the narrow frustum loses high rows off the
+      // top before their strike moment.
+      const ROW_SPREAD = small ? 4.2 : 6.2;
+      const ROWS = Array.from(
+        { length: LINE_COUNT },
+        (_, i) => 1.0 + (i / (LINE_COUNT - 1)) * ROW_SPREAD,
+      );
+      const rowFor = (i: number) => ROWS[(i * 7) % LINE_COUNT];
+      // The wall is decorative: single-line fragments, not wrapped paragraphs.
+      // A quote that wraps into a block breaks the redaction metaphor — the
+      // strike must cross ONE line. Cut at a word boundary, mark the cut.
+      const FRAG_MAX = small ? 30 : 48;
+      const frag = (q: string) => {
+        if (q.length <= FRAG_MAX) return q;
+        const cut = q.slice(0, FRAG_MAX);
+        const sp = cut.lastIndexOf(" ");
+        return cut.slice(0, sp > FRAG_MAX / 2 ? sp : FRAG_MAX).replace(/[,;:.]+$/, "") + " …";
+      };
 
       let renderer: import("three").WebGLRenderer;
       try {
@@ -62,10 +83,13 @@ export function RedactionWall({
       mount.appendChild(renderer.domElement);
 
       const scene = new THREE.Scene();
-      scene.fog = new THREE.Fog(0x0d0d0d, 18, 82);
+      // Tight fog: lines emerge from black well before they converge at the
+      // vanishing point, so the far field never reads as an overlapping pile.
+      scene.fog = new THREE.Fog(0x0d0d0d, 14, 48);
 
       const camera = new THREE.PerspectiveCamera(
-        55,
+        small ? 62 : 55, // wider on mobile — the narrow aspect starves the field
+
         mount.clientWidth / mount.clientHeight,
         0.1,
         200,
@@ -125,8 +149,8 @@ export function RedactionWall({
           const renderScene = new RenderPass(scene, camera);
           bloomPass = new UnrealBloomPass(
             new THREE.Vector2(mount.clientWidth, mount.clientHeight),
-            0.7, // strength
-            0.4, // radius
+            0.35, // strength
+            0.25, // radius
             0.0, // threshold 0 — isolation is by hiding non-strike meshes, not luminance
           );
           bloomComposer = new EffectComposer(renderer);
@@ -174,9 +198,15 @@ export function RedactionWall({
         }
       }
 
-      const FAR = -72;
-      const NEAR_RECYCLE = 16;
+      // Mobile has fewer lines — shorten the corridor so the visible field
+      // stays as dense (and the strike cadence as frequent) as desktop.
+      const FAR = small ? -48 : -72;
+      // Narrow frustum: lines outgrow a phone's width much sooner, so both the
+      // fade and the recycle come earlier there.
+      const NEAR_RECYCLE = small ? 9 : 12;
       const STRIKE_Z = 1.5;
+      const FADE_START = small ? 2 : 4; // dissolve well before text spans the viewport
+      const OVERSHOOT = 0.5; // strike bleeds past the text like a marker stroke
       const SPAN = NEAR_RECYCLE - FAR;
 
       type Line = {
@@ -213,37 +243,40 @@ export function RedactionWall({
       const setText = (line: Line, onSynced?: () => void) => {
         const flag = LAB_FLAGS[flagCursor % LAB_FLAGS.length];
         flagCursor++;
-        line.quote.text = flag.quote;
+        line.quote.text = frag(flag.quote);
         line.quote.sync(() => {
           const b = line.quote.textRenderInfo;
           if (b) {
-            line.width = b.blockBounds[2] - b.blockBounds[0];
+            line.width = b.blockBounds[2] - b.blockBounds[0] + OVERSHOOT;
             (line.strike.position as import("three").Vector3).x = -line.width / 2;
           }
           onSynced?.();
         });
       };
 
-      const strikeGeo = new THREE.PlaneGeometry(1, 0.07);
+      const strikeGeo = new THREE.PlaneGeometry(1, 0.13);
       strikeGeo.translate(0.5, 0, 0); // grows left→right from x=0
+
+      // x biased slightly right of the headline's column for balance;
+      // tighter jitter on narrow viewports so lines don't clip the edges.
+      const X_BIAS = small ? 0 : 0.8;
+      const X_JIT = small ? 1.5 : 4;
 
       for (let i = 0; i < LINE_COUNT; i++) {
         const group = new THREE.Group();
-        const lane = LANES[i % LANES.length];
         group.position.set(
-          lane + (Math.random() - 0.5) * 1.4,
-          1 + Math.random() * 6, // upper-biased so the flow clears the headline
+          X_BIAS + (Math.random() - 0.5) * X_JIT,
+          rowFor(i),
           FAR + (i / LINE_COUNT) * SPAN,
         );
 
         const quote = new Text();
         quote.font = "/fonts/anton.ttf";
-        quote.fontSize = 0.5;
+        quote.fontSize = small ? 0.36 : 0.5;
         quote.color = SOFT;
         quote.anchorX = "center";
         quote.anchorY = "middle";
-        quote.maxWidth = 12;
-        quote.textAlign = "center";
+        quote.whiteSpace = "nowrap";
         group.add(quote);
         hiddenDuringBloom.push(quote);
 
@@ -303,17 +336,20 @@ export function RedactionWall({
         const z = (line.group.position.z += dz);
         if (z > STRIKE_Z && !line.struck) line.struck = true;
         if (line.struck && line.progress < 1) {
-          line.progress = Math.min(1, line.progress + dz * 0.9);
+          line.progress = Math.min(1, line.progress + dz * 0.35);
           line.strike.scale.x = Math.max(0.0001, line.progress * line.width);
         }
         // Near-fade: dissolve lines as they pass the camera instead of clipping.
-        const near = z > 8 ? Math.max(0, 1 - (z - 8) / (NEAR_RECYCLE - 8)) : 1;
+        const near =
+          z > FADE_START
+            ? Math.max(0, 1 - (z - FADE_START) / (NEAR_RECYCLE - FADE_START))
+            : 1;
         line.quote.fillOpacity = (1 - 0.45 * line.progress) * near;
         strikeMat(line).opacity = near;
 
         if (z > NEAR_RECYCLE) {
           line.group.position.z -= SPAN;
-          line.group.position.y = 1 + Math.random() * 6;
+          line.group.position.x = X_BIAS + (Math.random() - 0.5) * X_JIT; // keep its row; re-jitter x only
           line.struck = false;
           line.progress = 0;
           line.strike.scale.x = 0.0001;
@@ -342,7 +378,7 @@ export function RedactionWall({
       if (reduced) {
         // Static composed frame: strike everything in place, no motion.
         lines.forEach((line, i) => {
-          line.group.position.z = FAR + 10 + (i / LINE_COUNT) * 26;
+          line.group.position.z = -34 + (i / LINE_COUNT) * 38;
           line.struck = true;
           line.progress = 1;
           line.strike.scale.x = line.width;

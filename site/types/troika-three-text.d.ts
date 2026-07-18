@@ -8,6 +8,7 @@ declare module "troika-three-text" {
     anchorY: number | "top" | "middle" | "bottom" | string;
     maxWidth: number;
     textAlign: "left" | "right" | "center" | "justify";
+    whiteSpace: "normal" | "nowrap";
     fillOpacity: number;
     outlineWidth: number | string;
     font: string | null;

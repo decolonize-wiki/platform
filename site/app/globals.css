@@ -98,7 +98,7 @@ a{color:inherit;}
 .request-copy{font-family:Georgia,'Iowan Old Style',serif;font-size:15px;line-height:1.6;color:var(--pink);margin:10px 0 0;max-width:52ch;}
 
 .hero h1 .q{color:var(--hot);}
-.cta{display:inline-block;border:1px solid var(--soft);color:var(--paper);font-family:ui-monospace,'Courier New',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;padding:13px 22px;text-decoration:none;transition:background .15s ease,color .15s ease,border-color .15s ease;}
+.cta{display:inline-block;background:none;cursor:pointer;border:1px solid var(--soft);color:var(--paper);font-family:ui-monospace,'Courier New',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;padding:13px 22px;text-decoration:none;transition:background .15s ease,color .15s ease,border-color .15s ease;}
 .cta:hover{background:var(--hot);color:var(--black);border-color:var(--hot);}
 .cta:disabled{opacity:.55;cursor:default;}
 .cta:disabled:hover{background:transparent;color:var(--paper);border-color:var(--soft);}
@@ -232,10 +232,14 @@ a{color:inherit;}
 .splash-eyebrow{font-size:10.5px;color:var(--grey);margin-bottom:16px;}
 .splash-eyebrow em{color:var(--hot);font-style:normal;}
 
-/* Same face, size band and left offset as the underlying `.hero h1` — when the
-   splash fades the identical headline shows through, reading as continuity. */
-.splash-h1{font-size:clamp(44px,14vw,160px);margin:0;overflow-wrap:normal;color:var(--paper);
-  text-shadow:0 2px 40px rgba(13,13,13,.6);}
+/* Anton — the wall's own face — so the splash speaks in ONE typographic voice.
+   Same size band and left offset as the underlying `.hero h1`, so the
+   crossfade still lands on a same-shaped headline. */
+.splash-h1{font-family:"Anton",'Arial Narrow',Haettenschweiler,Impact,sans-serif;
+  font-weight:400;letter-spacing:.005em;
+  font-size:clamp(44px,14vw,160px);margin:0;overflow-wrap:normal;color:var(--paper);
+  /* Two blur radii: a single wide blur reads as a boxy slab behind the glyphs. */
+  text-shadow:0 2px 18px rgba(13,13,13,.7),0 12px 90px rgba(13,13,13,.55);}
 .splash-q{color:var(--hot);}
 
 .splash-featured{margin:22px 0 26px;max-width:52ch;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;
@@ -246,6 +250,10 @@ a{color:inherit;}
 
 .splash-enter{opacity:0;transition:opacity .4s ease;}
 .splash-enter.on{opacity:1;}
+/* The button is auto-focused when it appears; the default hot outline around a
+   grey box reads as a glitch. Keep focus visible, but as the button's own
+   border turning hot instead of a second rectangle. */
+.splash-enter:focus-visible{outline:none;border-color:var(--hot);color:var(--hot);}
 
 @media(prefers-reduced-motion:reduce){
   .splash{transition:none;}

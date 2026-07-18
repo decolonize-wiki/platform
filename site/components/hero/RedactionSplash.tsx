@@ -1,5 +1,5 @@
 "use client";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { RedactionWall } from "./RedactionWall";
 import type { HeroFlag } from "../../lib/hero-flags";
 
@@ -16,7 +16,14 @@ export function RedactionSplash({ flags, onDismiss }: { flags: HeroFlag[]; onDis
   const [idx, setIdx] = useState(0);
   const dismissed = useRef(false);
   const enterRef = useRef<HTMLButtonElement>(null);
-  const featured = flags[idx % Math.max(1, flags.length)];
+  // Compact pairs only: a long featured quote grows the bottom block upward
+  // until the headline collides with the wall. Fall back to all if the data
+  // has too few short ones to cycle.
+  const pool = useMemo(() => {
+    const short = flags.filter((f) => f.quote.length <= 90 && f.rewrite.length <= 120);
+    return short.length >= 3 ? short : flags;
+  }, [flags]);
+  const featured = pool[idx % Math.max(1, pool.length)];
   const handleReady = useCallback(() => setReady(true), []);
 
   useEffect(() => {
@@ -27,7 +34,10 @@ export function RedactionSplash({ flags, onDismiss }: { flags: HeroFlag[]; onDis
       setTimeout(onDismiss, LEAVE_MS);  // ...then unmount → reads as continuity, not a cut
     };
     const tEnter = setTimeout(() => setShowEnter(true), APPEAR_MS);
-    const tAuto = setTimeout(dismiss, AUTO_MS);
+    // `?splash` (the dev force-show aid) also holds the splash open — no
+    // auto-dismiss — so it can be inspected while iterating. Prod unaffected.
+    const forced = new URLSearchParams(location.search).has("splash");
+    const tAuto = forced ? undefined : setTimeout(dismiss, AUTO_MS);
     const cycle = setInterval(() => setIdx((i) => i + 1), CYCLE_MS);
 
     // Dismiss on deliberate scroll only — a stray touch nudge must NOT fire it.
