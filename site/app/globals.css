@@ -260,3 +260,13 @@ a{color:inherit;}
   .splash-bar::after{animation:none;transform:none;width:100%;}
   .splash-enter{transition:none;}
 }
+
+/* ============================================================
+   Tier-1 art layer — interlude (home) + artfig (shared)
+   ============================================================ */
+.interlude{padding:clamp(40px,6vw,72px) clamp(18px,4vw,44px);border-top:1px solid var(--hair);}
+.eyebrow-i{font-family:ui-monospace,'Courier New',monospace;font-size:10.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--grey);display:flex;flex-wrap:wrap;gap:6px 24px;margin-bottom:28px;}
+.interlude-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:clamp(20px,3vw,40px);align-items:start;}
+.artfig{margin:0;}
+.artfig img{display:block;width:100%;height:auto;}
+.artfig figcaption{font-size:9.5px;color:var(--grey);margin-top:10px;}

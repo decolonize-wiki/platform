@@ -9,6 +9,7 @@ import { SLUG_REGION } from "../../lib/atlas-regions";
 import { EmailForm } from "../../components/EmailForm";
 import { RepoLink } from "../../components/RepoLink";
 import { heroFlags } from "../../lib/hero-flags";
+import { ArtFigure } from "../../components/ArtFigure";
 import type { Analysis } from "@schema/analysis";
 
 const REQUEST_URL =
@@ -138,6 +139,17 @@ export default async function Page({ params }: { params: Promise<Params> }) {
         <p className="request-copy">
           Pick the next articles: open a request — most-👍 goes first.
         </p>
+      </section>
+
+      <section className="interlude" aria-label="From the movement's own press">
+        <div className="eyebrow-i">
+          <span>The lineage</span>
+          <span>The movement always printed its own record</span>
+        </div>
+        <div className="interlude-grid">
+          <ArtFigure id="mpla-anniversary-1975" />
+          <ArtFigure id="free-huey-1968" />
+        </div>
       </section>
 
       <section className="atlas-section" id="atlas">
