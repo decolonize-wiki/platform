@@ -1,3 +1,15 @@
+## 2026-07-19 · splash approved and live, art layer built and shipped, methodology v0.2 tagged
+
+- Splash visual polish pass (single-line wall, row ladder, tamer bloom, Anton h1); owner approved; ff-merged feat/signature-hero to main and pushed (live).
+- Art layer (Tier 1) built via subagent-driven development from the 2026-07-18 plan: manifest of 6 CC0 NMAAHC pieces, sharp fetch/duotone pipeline (npm run build-art, idsId pinning), 12 committed webp variants, ArtFigure component.
+- Provenance audit: reviewers caught fabricated/wrong data in 3 of 6 planned entries; all 6 re-verified against real NMAAHC records (one piece replaced: MPLA 19th-anniversary flier 2015.97.27.62).
+- Owner redirect mid-flight: interlude section replaced by a hero art slider (right of DISCOVERED?) + new /en/art collection page with verified context per piece; methodology opener band (1922 NAACP broadside) kept.
+- /flow:deep-review: 2 BREAKS found and fixed (1280 variants actually 1028-1264px wide due to longest-edge IDS max param; hero caption wrap over art), 0 SECURITY; merged to main, pushed, verified live on www.decolonize.wiki/en/art.
+- Deck polish round (owner feedback): uniform paper mats, next-card peek behind gradient veil, hover/focus pause, lazy low-priority first slide, dynamic-lang brand link (df6fc08, pushed).
+- Methodology repo: reviewed PRs #2 (delegitimizing-labels) and #3 (ethnographic-present) — no real flaws; merged both, fixed 2 doc nits, tagged and pushed v0.2 (7 categories now).
+- Date spot-check closed via Wayback: Young Lords "ca. 1971" and MPLA "December 12, 1975" match the museum records.
+- CLAUDE.md discovered to be gitignored (local-only); longest-edge image-API pitfall recorded there locally.
+
 ## 2026-07-13 · Methodology v0.2 PRs and signature-hero concept chosen
 
 Resumed the paused research session and moved it into decisions + drafting.
