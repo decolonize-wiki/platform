@@ -76,7 +76,8 @@ function renderMarkdown(md: string): ReactNode[] {
   });
 }
 
-export default async function Page() {
+export default async function Page({ params }: { params: Promise<Params> }) {
+  const { lang } = await params;
   const [categories, sources] = await Promise.all([getCategories(), getSources()]);
 
   const webPageLd = {
@@ -96,7 +97,7 @@ export default async function Page() {
     <>
       <JsonLd data={webPageLd} />
       <header className="mast">
-        <Link href="/en" className="disp" style={{ textDecoration: "none" }}>
+        <Link href={`/${lang}`} className="disp" style={{ textDecoration: "none" }}>
           Decolonize.wiki
         </Link>
         <span className="mono">
